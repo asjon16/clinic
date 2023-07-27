@@ -1,4 +1,4 @@
-package com.clinic.domain.restcontroller;
+package com.clinic.domain.controller.rest;
 
 import com.clinic.domain.dto.UserDto;
 import com.clinic.service.UserService;
@@ -26,6 +26,7 @@ public class UserRestController {
         return ResponseEntity.ok(userService.update(id,u));
     }
 
+
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUserById(@PathVariable Integer id){
         return ResponseEntity.ok(toDto(userService.findById(id)));
@@ -41,6 +42,7 @@ public class UserRestController {
         userService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
 
 
 }

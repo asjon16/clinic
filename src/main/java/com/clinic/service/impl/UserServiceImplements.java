@@ -1,13 +1,16 @@
 package com.clinic.service.impl;
 
+import com.clinic.domain.dto.RegisterForm;
 import com.clinic.domain.dto.UserDto;
 import com.clinic.domain.exception.ResourceNotFoundException;
 import com.clinic.domain.mapper.UserMapper;
 import com.clinic.entity.User;
+import com.clinic.entity.UserRole;
 import com.clinic.repository.UserRepository;
 import com.clinic.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -22,6 +25,19 @@ import static com.clinic.domain.mapper.UserMapper.toEntity;
 @Service
 public class UserServiceImplements implements UserService{
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    @Override
+    public UserDto registerDetails(@Valid RegisterForm form) {
+        var user= new User();
+        user.setEmail(form.getEmail());
+        user.setPassword(passwordEncoder.encode(form.getPassword()));
+        user.setFirstname(form.getFirstname());
+        user.setLastname(form.getLastname());
+        user.setRole(UserRole.fromValue(form.getRole()));
+        return toDto(userRepository.save(user));
+    }
+
     @Override
     public UserDto create(@Valid UserDto user) {
         var result = userRepository.save(toEntity(user));

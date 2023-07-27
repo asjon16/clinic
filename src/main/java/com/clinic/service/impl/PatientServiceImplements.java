@@ -46,7 +46,7 @@ public class PatientServiceImplements implements PatientService {
     public Patient findById(Integer id) {
         return patientRepository.findById(id)
                 .orElseThrow(()-> new ResourceNotFoundException(String
-                        .format("User with id %s do not exist",id)));
+                        .format("Patient with id %s do not exist",id)));
     }
 
     @Override

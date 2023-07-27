@@ -1,4 +1,4 @@
-package com.clinic.domain.restcontroller;
+package com.clinic.domain.controller.rest;
 
 import com.clinic.domain.dto.PatientDto;
 import com.clinic.service.PatientService;

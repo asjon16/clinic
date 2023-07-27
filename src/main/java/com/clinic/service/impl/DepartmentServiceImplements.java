@@ -3,6 +3,8 @@ package com.clinic.service.impl;
 import com.clinic.domain.dto.DepartmentsDto;
 
 import com.clinic.domain.exception.ResourceNotFoundException;
+import com.clinic.domain.mapper.DepartmentsMapper;
+import com.clinic.domain.mapper.UserMapper;
 import com.clinic.entity.User;
 import com.clinic.entity.Departments;
 import com.clinic.entity.Gender;
@@ -17,8 +19,7 @@ import org.springframework.validation.annotation.Validated;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.clinic.domain.mapper.DepartmentsMapper.toDto;
-import static com.clinic.domain.mapper.DepartmentsMapper.toEntity;
+import static com.clinic.domain.mapper.DepartmentsMapper.*;
 
 
 @RequiredArgsConstructor
@@ -33,31 +34,43 @@ public class DepartmentServiceImplements implements DepartmentService {
         var result = departmentRepository.save(toEntity(departments));
         return toDto(result);
     }
+    @Override
+    public DepartmentsDto createNoUsers(@Valid DepartmentsDto departments) {
+        var result = departmentRepository.save(toEntityNoUsers(departments));
+        return toDtoNoUsers(result);
+    }
 
     @Override
     public DepartmentsDto update(Integer id, @Valid DepartmentsDto departmentsDto) {
         var department = findById(id);
         department.setName(departmentsDto.getName());
-        department.setDoctor(departmentsDto.getDoctor().stream().map(User::new).collect(Collectors.toList()));
+        department.setDoctor(departmentsDto.getDoctor().stream().map(UserMapper::toEntity).collect(Collectors.toList()));
         return toDto(department);
+    }
+    @Override
+    public DepartmentsDto updateDepartmentNoUsers(Integer id, @Valid DepartmentsDto departmentsDto) {
+        var department = findById(id);
+        department.setName(departmentsDto.getName());
+        departmentRepository.save(department);
+        return toDtoNoUsers(department);
     }
 
     @Override
     public Departments findById(Integer id) {
         return departmentRepository.findById(id)
                 .orElseThrow(()-> new ResourceNotFoundException(String
-                        .format("User with id %s do not exist",id)));
+                        .format("Department with id %s do not exist",id)));
     }
 
     @Override
-    public List<PatientDto> findAll() {
-        return patientRepository.findAll().stream().map(PatientMapper::toDto).collect(Collectors.toList());
+    public List<DepartmentsDto> findAll() {
+        return departmentRepository.findAll().stream().map(DepartmentsMapper::toDto).collect(Collectors.toList());
     }
 
     @Override
     public void deleteById(Integer id) {
         var toDelete = findById(id);
-        toDelete.setDeleted(true);
-        patientRepository.save(toDelete);
+       /* toDelete.setDeleted(true);*/
+        departmentRepository.delete(toDelete);
     }
 }

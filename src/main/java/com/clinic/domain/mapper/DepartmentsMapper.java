@@ -27,7 +27,13 @@ public class DepartmentsMapper {
             user.setDoctorDepartment(departments);
             users.add(user);
         } return new Departments(d.getId(), d.getName(), users);
+    }
+    public static Departments toEntityNoUsers(DepartmentsDto d){
+        return new Departments(d.getName());
 
+    }
+    public static DepartmentsDto toDtoNoUsers(Departments d){
+        return new DepartmentsDto(d.getId(),d.getName());
 
     }
     public static DepartmentsDto toDto(Departments d){

@@ -14,6 +14,7 @@ import java.util.List;
 public class Departments extends BaseEntity<Integer>{
 
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -23,4 +24,11 @@ public class Departments extends BaseEntity<Integer>{
     @Column(name = "doctors")
     @OneToMany(mappedBy = "doctorDepartment", cascade = CascadeType.ALL)
     private List<User> doctor;
+    public Departments(Integer id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+    public Departments(String name) {
+        this.name = name;
+    }
 }
