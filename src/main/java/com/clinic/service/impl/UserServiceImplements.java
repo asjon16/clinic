@@ -1,5 +1,6 @@
 package com.clinic.service.impl;
 
+import com.clinic.domain.dto.DepartmentsDto;
 import com.clinic.domain.dto.RegisterForm;
 import com.clinic.domain.dto.UserDto;
 import com.clinic.domain.exception.ResourceNotFoundException;
@@ -7,6 +8,7 @@ import com.clinic.domain.mapper.UserMapper;
 import com.clinic.entity.User;
 import com.clinic.entity.UserRole;
 import com.clinic.repository.UserRepository;
+import com.clinic.service.DepartmentService;
 import com.clinic.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,8 @@ import org.springframework.validation.annotation.Validated;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.clinic.domain.mapper.DepartmentsMapper.toEntity;
+import static com.clinic.domain.mapper.DepartmentsMapper.toDto;
 import static com.clinic.domain.mapper.UserMapper.toDto;
 import static com.clinic.domain.mapper.UserMapper.toEntity;
 
@@ -26,6 +30,8 @@ import static com.clinic.domain.mapper.UserMapper.toEntity;
 public class UserServiceImplements implements UserService{
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final DepartmentService departmentService;
+
 
     @Override
     public UserDto registerDetails(@Valid RegisterForm form) {

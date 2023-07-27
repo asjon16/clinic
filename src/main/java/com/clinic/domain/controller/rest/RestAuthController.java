@@ -26,23 +26,26 @@ public class RestAuthController {
     }
 
     @PostMapping("/login")
-    public String token(@RequestBody LoginRequestDto req) {
-        return "Bearer ".concat(authService.generateToken(req));
+    public ResponseEntity<String> token(@RequestBody LoginRequestDto req) {
+        String token = authService.generateToken(req);
+
+        if (token != null) {
+            return ResponseEntity.ok("Bearer " + token);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 
     @PostMapping("/register")
     public ResponseEntity<UserDto> register(@RequestBody @Valid RegisterForm user, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            // If there are validation errors, return a bad request response
             return ResponseEntity.badRequest().build();
         }
 
         UserDto registeredUser = userService.registerDetails(user);
         if (registeredUser != null) {
-            // If registration is successful, return the registered user data
             return ResponseEntity.ok(registeredUser);
         } else {
-            // If registration fails (e.g., username already exists), return a conflict response
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
     }
