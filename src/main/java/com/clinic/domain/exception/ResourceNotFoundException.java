@@ -1,4 +1,4 @@
-package com.clinic.exception;
+package com.clinic.domain.exception;
 
 public class ResourceNotFoundException extends RuntimeException {
 
