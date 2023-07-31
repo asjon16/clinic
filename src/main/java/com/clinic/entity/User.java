@@ -12,7 +12,6 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
 @Builder
 public class User extends BaseEntity<Integer> implements UserDetails {
 
@@ -30,13 +29,21 @@ public class User extends BaseEntity<Integer> implements UserDetails {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
+    public User() {
+    }
+
     @ManyToOne
-    @JoinColumn(name = "doctor_id", referencedColumnName = "id")
+    @JoinColumn(name = "department_id", referencedColumnName = "id")
     private Departments doctorDepartment;
 
-    // @OneToMany(mappedBy = "doctor",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    @OneToOne(mappedBy = "doctor",cascade = CascadeType.ALL)
+
+    @OneToOne
+    @JoinColumn(name = "schedule_id", referencedColumnName = "id")
     private DoctorSchedule schedule;
+
+    public User(DoctorSchedule schedule) {
+        this.schedule = schedule;
+    }
 
     public User(String lastname) {
         this.lastname = lastname;

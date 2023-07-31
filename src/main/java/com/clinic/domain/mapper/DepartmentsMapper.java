@@ -14,19 +14,9 @@ import java.util.stream.Collectors;
 
 public class DepartmentsMapper {
     public static Departments toEntity(DepartmentsDto d){
-        List<User> users = new ArrayList<>();
-        for (UserDto userDto : d.getDoctor()){
-            User user = new User();
-            user.setId(userDto.getId());
-            user.setFirstname(userDto.getFirstname());
-            user.setLastname(userDto.getLastname());
-            user.setEmail(userDto.getEmail());
-            user.setPassword(userDto.getPassword());
-            Departments departments = new Departments();
-            departments.setName(d.getName());
-            user.setDoctorDepartment(departments);
-            users.add(user);
-        } return new Departments(d.getId(), d.getName(), users);
+        Departments departments = new Departments();
+        departments.setName(d.getName());
+        return departments;
     }
     public static Departments toEntityNoUsers(DepartmentsDto d){
         return new Departments(d.getName());
@@ -36,7 +26,7 @@ public class DepartmentsMapper {
         return new DepartmentsDto(d.getId(),d.getName());
 
     }
-    public static DepartmentsDto toDto(Departments d){
+   /* public static DepartmentsDto toDto(Departments d){
         List<UserDto> userDtos = new ArrayList<>();
         for (User users : d.getDoctor()){
             UserDto userDto = new UserDto();
@@ -45,11 +35,11 @@ public class DepartmentsMapper {
             userDto.setLastname(users.getLastname());
             userDto.setEmail(users.getEmail());
             userDto.setPassword(users.getPassword());
-            DepartmentsDto departmentsDto = new DepartmentsDto();
-            departmentsDto.setName(d.getName());
-            userDto.setDepartmentsDto(departmentsDto);
+            *//*DepartmentsDto departmentsDto = new DepartmentsDto();
+            departmentsDto.setName(d.getName());*//*
+            userDto.setDepartmentsDto(d.getName());
             userDtos.add(userDto);
         } return new DepartmentsDto(d.getId(), d.getName(), userDtos);
 
-    }
+    }*/
 }

@@ -17,6 +17,13 @@ public class DepartmentsDto {
 
     private Integer id;
 
+    @NotEmpty
+    @Size(max = 30,message = "Maximum size of name is 30")
+    private String name;
+
+    @Size(max = 30,message = "Maximum size of name is 30")
+    private List<String> doctor;
+
     public DepartmentsDto(String name) {
         this.name = name;
     }
@@ -24,11 +31,4 @@ public class DepartmentsDto {
         this.name = name;
         this.id = id;
     }
-
-    @NotEmpty
-    @Size(max = 30,message = "Maximum size of name is 30")
-    private String name;
-
-    @Size(max = 30,message = "Maximum size of name is 30")
-    private List<UserDto> doctor;
 }

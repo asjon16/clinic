@@ -7,9 +7,9 @@ import jakarta.validation.Valid;
 import java.util.List;
 
 public interface DepartmentService {
-    DepartmentsDto create(@Valid DepartmentsDto department);
+   /* DepartmentsDto create(@Valid DepartmentsDto department);*/
     DepartmentsDto createNoUsers(@Valid DepartmentsDto department);
-    DepartmentsDto update(Integer id,@Valid DepartmentsDto department);
+
     DepartmentsDto updateDepartmentNoUsers(Integer id, @Valid DepartmentsDto department);
     Departments findById(Integer id);
     List<DepartmentsDto> findAll();

@@ -28,7 +28,8 @@ public class UserDto {
     @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,20}$",message = "Password not valid")
     private String password;
     private String role;
-    private DepartmentsDto departmentsDto;
+    private String departmentsDto;
+    private String doctorSchedule ;
 
     public Integer getId() {
         return id;

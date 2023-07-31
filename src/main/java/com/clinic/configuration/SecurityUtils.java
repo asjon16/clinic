@@ -29,6 +29,6 @@ public class SecurityUtils {
 
     public static Integer getRestLoggedUser(){
         var authentication = (Jwt)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return authentication.getClaim("sub");
+        return Integer.valueOf(authentication.getClaim("sub"));
     }
 }

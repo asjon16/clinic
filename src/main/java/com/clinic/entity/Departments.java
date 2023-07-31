@@ -3,6 +3,7 @@ package com.clinic.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -21,13 +22,7 @@ public class Departments extends BaseEntity<Integer>{
     @Column(name = "department_name")
     private String name;
 
-    @Column(name = "doctors")
-    @OneToMany(mappedBy = "doctorDepartment", cascade = CascadeType.ALL)
-    private List<User> doctor;
-    public Departments(Integer id, String name) {
-        this.id = id;
-        this.name = name;
-    }
+
     public Departments(String name) {
         this.name = name;
     }

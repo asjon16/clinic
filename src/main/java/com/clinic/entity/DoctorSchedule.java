@@ -9,28 +9,29 @@ import lombok.Setter;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Entity
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
 public class DoctorSchedule extends BaseEntity<Integer>{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private LocalDateTime workingHours;
+    @OneToMany(mappedBy = "doctorSchedule",cascade = CascadeType.ALL)
+    private List<Appointments> appointments ;
 
-
-    @OneToOne
+    @OneToOne(mappedBy = "schedule",cascade = CascadeType.ALL)
     private User doctor;
 
-    @OneToMany(mappedBy = "appointment",cascade = CascadeType.ALL)
-    private List<Patient>patient;
+    private LocalDateTime startTime ;
 
+    private LocalDateTime endTime ;
 
+    public DoctorSchedule() {
+    }
 }

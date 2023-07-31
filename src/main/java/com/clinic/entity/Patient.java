@@ -24,8 +24,8 @@ public class Patient extends BaseEntity<Integer>{
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @ManyToOne
-    private DoctorSchedule appointment;
+     @OneToOne(mappedBy = "patient",cascade = CascadeType.ALL)
+    private Appointments appointment;
 
 
 }
