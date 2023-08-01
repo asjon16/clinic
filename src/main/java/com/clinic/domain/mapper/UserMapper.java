@@ -28,6 +28,7 @@ public class UserMapper {
         return user;
     }
 
+// bej krijimin e schedules ne momentin qe krijohet doktori
 
 
 }

@@ -99,6 +99,8 @@ public class UserServiceImplements implements UserService{
         userRepository.save(result);
         return toDto(result);
     }
+
+    //transactional
     public UserDto assignAnAppointment(Integer doctorId, Integer appointmentId){
         var doctor = findById(doctorId);
         var doctorSchedule = doctor.getSchedule();
@@ -110,6 +112,7 @@ public class UserServiceImplements implements UserService{
        if (appointments == null){
            appointments=new ArrayList<>();
        }
+
        appointments.add(appointment);
 
        return toDto(doctor);

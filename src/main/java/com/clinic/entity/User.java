@@ -39,7 +39,7 @@ public class User extends BaseEntity<Integer> implements UserDetails {
 
     @OneToOne
     @JoinColumn(name = "schedule_id", referencedColumnName = "id")
-    private DoctorSchedule schedule;
+    private DoctorSchedule schedule ;
 
     public User(DoctorSchedule schedule) {
         this.schedule = schedule;

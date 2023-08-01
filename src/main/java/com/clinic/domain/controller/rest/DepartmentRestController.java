@@ -38,7 +38,8 @@ public class DepartmentRestController {
     }
 
     @DeleteMapping("/{id}") // needs work, nuk fshin departamentin nese ka user qe e ka si parameter
-    public ResponseEntity<Void> deletePatient(@PathVariable Integer id){
+    //throw exceptions kur ka akoma users
+    public ResponseEntity<Void> deleteDepartment(@PathVariable Integer id){
         departmentService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }

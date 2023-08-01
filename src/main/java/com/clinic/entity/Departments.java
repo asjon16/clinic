@@ -23,6 +23,7 @@ public class Departments extends BaseEntity<Integer>{
     private String name;
 
 
+
     public Departments(String name) {
         this.name = name;
     }
