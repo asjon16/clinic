@@ -19,27 +19,27 @@ public class PatientRestController {
 
     private final PatientService patientService;
 
-    @PostMapping("/create")
+    @PostMapping("/create") // works
     public ResponseEntity<PatientDto> createPatient(@RequestBody PatientDto p){
         return ResponseEntity.ok(patientService.create(p));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id}") // works
     public ResponseEntity<PatientDto> updatePatient(@PathVariable Integer id, @RequestBody PatientDto p){
         return ResponseEntity.ok(patientService.update(id,p));
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{id}") // works
     public ResponseEntity<PatientDto> getPatientById(@PathVariable Integer id){
         return ResponseEntity.ok(toDto(patientService.findById(id)));
     }
 
-    @GetMapping
+    @GetMapping // works
     public ResponseEntity<List<PatientDto>> getPatients(){
         return ResponseEntity.ok(patientService.findAll());
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}") // does it's job (turns deleted to true)
     public ResponseEntity<Void> deletePatient(@PathVariable Integer id){
         patientService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);

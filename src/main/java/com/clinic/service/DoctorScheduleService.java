@@ -11,10 +11,18 @@ import java.util.List;
 public interface DoctorScheduleService {
 
 
-    DoctorScheduleDto update(Integer id,@Valid DoctorScheduleDto doctorSchedule);
+    /* @Override
+         public DoctorScheduleDto update(Integer id, DoctorScheduleDto doctorSchedule) {
+             var result = userService.findById(id);
+             result.setSchedule(DoctorScheduleMapper.toEntity(doctorSchedule));
+             return DoctorScheduleMapper.toDto(result.getSchedule());
+         }*/
+    DoctorScheduleDto updateSchedule(Integer id, DoctorScheduleDto doctorSchedule);
+
+    /*    DoctorScheduleDto update(Integer id,@Valid DoctorScheduleDto doctorSchedule);*/
     DoctorSchedule findById(Integer id);
     List<DoctorScheduleDto> findAll();
-    DoctorScheduleDto updateSchedule( DoctorScheduleDto doctorSchedule);
+   /* DoctorSchedule updateSchedule( DoctorScheduleDto doctorSchedule);*/
     void deleteById(Integer id);
 
 }

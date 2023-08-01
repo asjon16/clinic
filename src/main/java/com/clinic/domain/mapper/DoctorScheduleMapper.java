@@ -15,8 +15,6 @@ public class DoctorScheduleMapper {
         return doctorSchedule;
     }
 
-
-
     public static DoctorScheduleDto toDto (DoctorSchedule d){
         DoctorScheduleDto doctorScheduleDto = new DoctorScheduleDto();
         doctorScheduleDto.setId(d.getId());
@@ -24,6 +22,11 @@ public class DoctorScheduleMapper {
         doctorScheduleDto.setEndTime(d.getEndTime());
         doctorScheduleDto.setDoctor(d.getDoctor().getLastname());
         return doctorScheduleDto;
+    }
+    public static DoctorSchedule toUpdate(DoctorSchedule u, DoctorScheduleDto d){
+        u.setStartTime(d.getStartTime());
+        u.setEndTime(d.getStartTime());
+        return u;
     }
 
 

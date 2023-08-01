@@ -27,17 +27,17 @@ public class DepartmentRestController {
         return ResponseEntity.ok(departmentService.updateDepartmentNoUsers(id,d));
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{id}") //works
     public ResponseEntity<DepartmentsDto> getDepartmentById(@PathVariable Integer id){
         return ResponseEntity.ok(toDtoNoUsers(departmentService.findById(id)));
     }
 
-    @GetMapping
+    @GetMapping // works
     public ResponseEntity<List<DepartmentsDto>> getDepartments(){
         return ResponseEntity.ok(departmentService.findAll());
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}") // needs work, nuk fshin departamentin nese ka user qe e ka si parameter
     public ResponseEntity<Void> deletePatient(@PathVariable Integer id){
         departmentService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);

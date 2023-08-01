@@ -1,13 +1,16 @@
 package com.clinic.service.impl;
 
 import com.clinic.domain.dto.AppointmentsDto;
+import com.clinic.domain.dto.PatientDto;
 import com.clinic.domain.exception.ResourceNotFoundException;
 import com.clinic.domain.mapper.AppointmentsMapper;
 import com.clinic.domain.mapper.PatientMapper;
 import com.clinic.entity.Appointments;
 import com.clinic.entity.Patient;
 import com.clinic.repository.AppointmentRepository;
+import com.clinic.repository.PatientRepository;
 import com.clinic.service.AppointmentService;
+import com.clinic.service.PatientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -23,6 +26,7 @@ import static com.clinic.domain.mapper.AppointmentsMapper.*;
 public class AppointmentServiceImpl implements AppointmentService {
 
     private final AppointmentRepository appointmentRepository;
+    private final PatientService patientService;
 
 
     @Override
@@ -33,11 +37,22 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public AppointmentsDto create(AppointmentsDto appointment) {
-       var result = AppointmentsMapper.toEntity(appointment);
+    public AppointmentsDto create(Integer id, PatientDto patient) {
+       var result = findById(id);
+         patientService.create(patient);
+         result.setPatient(PatientMapper.toEntity(patient));
          appointmentRepository.save(result);
          return toDto(result);
     }
+    @Override
+    public AppointmentsDto createWithRegisteredPatient(Integer id, Integer patientId) {
+        var result = findById(id);
+        var patient = patientService.findById(patientId);
+        result.setPatient(patient);
+        appointmentRepository.save(result);
+        return toDto(result);
+    }
+
 
     /*@Override
     public AppointmentsDto update(Integer id, AppointmentsDto appointment) {

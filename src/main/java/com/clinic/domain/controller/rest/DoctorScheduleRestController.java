@@ -23,22 +23,22 @@ public class DoctorScheduleRestController {
     private final DoctorScheduleService doctorScheduleService;
     private final UserService userService;
 
-    @PutMapping("/{id}")
+    /*@PutMapping("/{id}")
     public ResponseEntity<DoctorScheduleDto> updateDoctorSchedule(@PathVariable Integer id, @RequestBody DoctorScheduleDto d){
-        return ResponseEntity.ok(doctorScheduleService.update(id,d));
-    }
+        return ResponseEntity.ok(doctorScheduleService.updateSchedule(id,d));
+    }*/
 
-    @GetMapping("/{id}")
+    @GetMapping("/{id}") // not tested
     public ResponseEntity<DoctorScheduleDto> getDoctorScheduleById(@PathVariable Integer id){
         return ResponseEntity.ok(toDto(doctorScheduleService.findById(id)));
     }
 
-    @GetMapping
+    @GetMapping // not tested
     public ResponseEntity<List<DoctorScheduleDto>> getDoctorSchedules(){
         return ResponseEntity.ok(doctorScheduleService.findAll());
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}")// not tested
     public ResponseEntity<Void> deleteDoctorSchedule(@PathVariable Integer id){
         doctorScheduleService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);

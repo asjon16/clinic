@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,7 +37,7 @@ public class UserServiceImplements implements UserService{
     private final PatientService patientService;
     private final AppointmentService appointmentService;
     private final DepartmentRepository departmentRepository;
-
+    private final DoctorScheduleService doctorScheduleService;
     private final DoctorScheduleRepository doctorScheduleRepository;
 
     private LocalDateTime now = LocalDateTime.now();
@@ -90,29 +91,30 @@ public class UserServiceImplements implements UserService{
         if (schedule == null) {
             schedule = new DoctorSchedule();
         }
-        DoctorScheduleMapper.toEntity(doctorScheduleDto);
-        schedule.setDoctor(result);
-        result.setSchedule(schedule);
-        doctorScheduleRepository.save(schedule);
+        var newSchedule = doctorScheduleService.updateSchedule(schedule.getId(),doctorScheduleDto);
+        var omg = DoctorScheduleMapper.toEntity(newSchedule);
+        omg.setDoctor(result);
+        doctorScheduleRepository.save(omg);
+        result.setSchedule(omg);
         userRepository.save(result);
-
-
-        /*if (result.getSchedule() == null){
-            schedule = new DoctorSchedule();
-            schedule= DoctorScheduleMapper.toEntity(doctorScheduleDto);
-            schedule.setDoctor(result);
-            result.setSchedule(schedule);
-            doctorScheduleRepository.save(schedule);
-            userRepository.save(result);
-        } else {
-            schedule = result.getSchedule();
-            schedule= DoctorScheduleMapper.toEntity(doctorScheduleDto);
-            schedule.setDoctor(result);
-            result.setSchedule(schedule);
-            doctorScheduleService.updateSchedule(DoctorScheduleMapper.toDto(schedule));
-            userRepository.save(result);
-        }*/
         return toDto(result);
+    }
+    public UserDto assignAnAppointment(Integer doctorId, Integer appointmentId){
+        var doctor = findById(doctorId);
+        var doctorSchedule = doctor.getSchedule();
+        if (doctorSchedule==null){
+            doctorSchedule=new DoctorSchedule();
+        }
+        var appointment = appointmentService.findById(appointmentId);
+       List<Appointments> appointments= doctorSchedule.getAppointments();
+       if (appointments == null){
+           appointments=new ArrayList<>();
+       }
+       appointments.add(appointment);
+
+       return toDto(doctor);
+
+
     }
 
     @Override // Doesnt work, it wont change the password
