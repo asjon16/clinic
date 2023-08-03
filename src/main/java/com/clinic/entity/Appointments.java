@@ -28,6 +28,11 @@ public class Appointments extends BaseEntity<Integer>{
     private LocalDateTime endOfAppointment ;//=startOfAppointment.plusHours(1);
 
     @ManyToOne
+    @JoinColumn(name = "patient_id")
+    private Patient patient;
+
+
+    @ManyToOne
     @JoinColumn(name = "schedule_id",referencedColumnName = "id")
     private DoctorSchedule doctorSchedule;
 
@@ -42,9 +47,8 @@ public class Appointments extends BaseEntity<Integer>{
         this.endOfAppointment = endOfAppointment;
     }
 
-    @OneToOne
-    @JoinColumn(name = "patient_id")
-    private Patient patient;
-
-
+    @Override
+    public String toString() {
+        return "Appointment : " + patient.getName() + " at " + startOfAppointment + " until " + endOfAppointment;
+    }
 }

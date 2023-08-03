@@ -32,6 +32,11 @@ public class DoctorSchedule extends BaseEntity<Integer>{
 
     private LocalDateTime endTime ;
 
+    public DoctorSchedule(LocalDateTime startTime, LocalDateTime endTime) {
+        this.startTime = startTime;
+        this.endTime = endTime;
+    }
+
     public DoctorSchedule() {
     }
 }

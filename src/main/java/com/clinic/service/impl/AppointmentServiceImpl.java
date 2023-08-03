@@ -6,9 +6,7 @@ import com.clinic.domain.exception.ResourceNotFoundException;
 import com.clinic.domain.mapper.AppointmentsMapper;
 import com.clinic.domain.mapper.PatientMapper;
 import com.clinic.entity.Appointments;
-import com.clinic.entity.Patient;
 import com.clinic.repository.AppointmentRepository;
-import com.clinic.repository.PatientRepository;
 import com.clinic.service.AppointmentService;
 import com.clinic.service.PatientService;
 import lombok.RequiredArgsConstructor;
@@ -45,12 +43,12 @@ public class AppointmentServiceImpl implements AppointmentService {
          return toDto(result);
     }
     @Override
-    public AppointmentsDto createWithRegisteredPatient(Integer id, Integer patientId) {
-        var result = findById(id);
+    public AppointmentsDto createNewWithRegisteredPatient(AppointmentsDto appointmentsDto, Integer patientId) {
+       var appointment = toEntityNoPatients(appointmentsDto);
         var patient = patientService.findById(patientId);
-        result.setPatient(patient);
-        appointmentRepository.save(result);
-        return toDto(result);
+        appointment.setPatient(patient);
+        appointmentRepository.save(appointment);
+        return toDto(appointment);
     }
 
 

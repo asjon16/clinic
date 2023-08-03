@@ -15,10 +15,13 @@ public interface AppointmentService {
 
     AppointmentsDto createNoPatients(@Valid AppointmentsDto appointment);
     AppointmentsDto create(Integer id, PatientDto patient);
-  /*  AppointmentsDto update(Integer id,@Valid AppointmentsDto appointment);*/
+
+    AppointmentsDto createNewWithRegisteredPatient(AppointmentsDto appointmentsDto, Integer patientId);
+
+    /*  AppointmentsDto update(Integer id,@Valid AppointmentsDto appointment);*/
     Appointments findById(Integer id);
     List<AppointmentsDto> findAll();
-    AppointmentsDto createWithRegisteredPatient(Integer id, Integer patientId);
+
     void deleteById(Integer id);
 }
 

@@ -12,7 +12,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
+
 public class DepartmentsDto {
 
     private Integer id;
@@ -20,9 +20,6 @@ public class DepartmentsDto {
     @NotEmpty
     @Size(max = 30,message = "Maximum size of name is 30")
     private String name;
-
-    @Size(max = 30,message = "Maximum size of name is 30")
-    private List<String> doctor;
 
     public DepartmentsDto(String name) {
         this.name = name;

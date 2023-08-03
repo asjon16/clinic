@@ -30,12 +30,11 @@ public class AppointmentRestController {
         return ResponseEntity.ok(appointmentService.createNoPatients(a));
     }
 
-    @PostMapping("/created/{id}") //partially okay
-    public ResponseEntity<AppointmentsDto> createAppointmentWithRegisteredPatient
-            (@PathVariable Integer id, @RequestBody Integer patientId){
-        return ResponseEntity.ok(appointmentService.createWithRegisteredPatient(id,patientId));
+    @PostMapping("/creates/{patientId}") //testing
+    public ResponseEntity<AppointmentsDto> createNewAppointmentWithRegisteredPatient
+            (@PathVariable Integer patientId, @RequestBody AppointmentsDto appointmentsDto){
+        return ResponseEntity.ok(appointmentService.createNewWithRegisteredPatient(appointmentsDto,patientId));
     }
-
 
     @GetMapping("/{id}") //not tested
     public ResponseEntity<AppointmentsDto> getAppointmentById(@PathVariable Integer id){

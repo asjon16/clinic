@@ -1,8 +1,10 @@
 package com.clinic.service.impl;
 
+import com.clinic.domain.dto.AppointmentsDto;
 import com.clinic.domain.dto.PatientDto;
 import com.clinic.domain.dto.UserDto;
 import com.clinic.domain.exception.ResourceNotFoundException;
+import com.clinic.domain.mapper.AppointmentsMapper;
 import com.clinic.domain.mapper.PatientMapper;
 import com.clinic.entity.Gender;
 import com.clinic.entity.Patient;
@@ -53,6 +55,7 @@ public class PatientServiceImplements implements PatientService {
     public List<PatientDto> findAll() {
         return patientRepository.findAll().stream().map(PatientMapper::toDto).collect(Collectors.toList());
     }
+
 
     @Override
     public void deleteById(Integer id) {

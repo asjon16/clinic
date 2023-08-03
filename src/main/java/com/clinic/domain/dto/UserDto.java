@@ -7,6 +7,8 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.antlr.v4.runtime.misc.NotNull;
 
+import java.util.List;
+
 @Builder
 @Getter
 @Setter
@@ -30,6 +32,7 @@ public class UserDto {
     private String role;
     private String departmentsDto;
     private String doctorSchedule ;
+    private List<String> appointments;
 
     public Integer getId() {
         return id;

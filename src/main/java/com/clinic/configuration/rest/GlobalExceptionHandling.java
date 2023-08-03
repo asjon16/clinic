@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.sql.Time;
+
 @Profile("rest")
 @RestControllerAdvice
 public class GlobalExceptionHandling {
@@ -29,6 +31,17 @@ public class GlobalExceptionHandling {
   }
   @ExceptionHandler
   public ResponseEntity<GenericExceptionResponse> handleGenericException (UserDeletedException exp, HttpServletRequest req){
+    var response = new GenericExceptionResponse(HttpStatus.BAD_REQUEST.value(),req.getRequestURI(), exp.getMessage());
+    return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+  }
+  @ExceptionHandler
+  public ResponseEntity<GenericExceptionResponse> handleGenericException (AppointmentAlreadyAssignedException exp, HttpServletRequest req){
+    var response = new GenericExceptionResponse(HttpStatus.BAD_REQUEST.value(),req.getRequestURI(), exp.getMessage());
+    return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler
+  public ResponseEntity<GenericExceptionResponse> handleGenericException (TimeOverlapException exp, HttpServletRequest req){
     var response = new GenericExceptionResponse(HttpStatus.BAD_REQUEST.value(),req.getRequestURI(), exp.getMessage());
     return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
   }
