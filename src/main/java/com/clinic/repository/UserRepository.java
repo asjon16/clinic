@@ -17,4 +17,5 @@ public interface UserRepository extends JpaRepository<User,Integer> {
             "WHERE u.role = com.clinic.entity.UserRole.DOCTOR")
     List<User> findDoctorsWithScheduleAndAppointments();
 
+
 }
