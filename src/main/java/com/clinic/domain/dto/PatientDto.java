@@ -4,10 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 @Builder
@@ -27,5 +24,7 @@ public class PatientDto {
     @Max(value =130, message = "Mosha nuk mund te jete me shume se 130")
     private Integer age;
     private String gender;
+    @NotNull
+    private Integer nId;
 
 }

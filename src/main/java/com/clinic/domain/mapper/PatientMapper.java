@@ -11,6 +11,7 @@ public class PatientMapper {
         return Patient.builder()
                 .name(p.getName())
                 .age(p.getAge())
+                .nId(p.getNId())
                 .gender(Gender.fromValue(p.getGender()))
                 .build();
     }
@@ -19,6 +20,7 @@ public class PatientMapper {
                 .id(p.getId())
                 .name(p.getName())
                 .age(p.getAge())
+                .nId(p.getNId())
                 .gender(p.getGender().name())
                 .build();
     }

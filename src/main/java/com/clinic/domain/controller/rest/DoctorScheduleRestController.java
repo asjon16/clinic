@@ -28,10 +28,11 @@ public class DoctorScheduleRestController {
         return ResponseEntity.ok(doctorScheduleService.updateSchedule(id,d));
     }*/
 
-    @GetMapping("/{id}") // not tested
+    @GetMapping("/{id}") // works
     public ResponseEntity<DoctorScheduleDto> getDoctorScheduleById(@PathVariable Integer id){
         return ResponseEntity.ok(toDto(doctorScheduleService.findById(id)));
     }
+
 
     @GetMapping // not tested
     public ResponseEntity<List<DoctorScheduleDto>> getDoctorSchedules(){

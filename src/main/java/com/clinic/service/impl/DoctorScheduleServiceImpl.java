@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,7 +22,6 @@ import java.util.stream.Collectors;
 public class DoctorScheduleServiceImpl implements DoctorScheduleService {
 
     private final DoctorScheduleRepository doctorScheduleRepository;
-    private final UserRepository userRepository;
 
 
    /* @Override
@@ -57,4 +57,7 @@ public class DoctorScheduleServiceImpl implements DoctorScheduleService {
         var toDelete= findById(id);
         doctorScheduleRepository.delete(toDelete);
     }
+
+
+
 }

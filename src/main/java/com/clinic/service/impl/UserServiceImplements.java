@@ -5,6 +5,7 @@ import com.clinic.domain.exception.*;
 import com.clinic.domain.mapper.DoctorScheduleMapper;
 import com.clinic.domain.mapper.UserMapper;
 import com.clinic.entity.*;
+import com.clinic.repository.AppointmentRepository;
 import com.clinic.repository.DepartmentRepository;
 import com.clinic.repository.DoctorScheduleRepository;
 import com.clinic.repository.UserRepository;
@@ -16,8 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
-import java.beans.Transient;
-import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +40,7 @@ public class UserServiceImplements implements UserService{
     private final DepartmentRepository departmentRepository;
     private final DoctorScheduleService doctorScheduleService;
     private final DoctorScheduleRepository doctorScheduleRepository;
+    private final AppointmentRepository appointmentRepository;
 
     private LocalDateTime now = LocalDateTime.now();
 
@@ -142,7 +143,6 @@ public class UserServiceImplements implements UserService{
 
     }
 
-
     @Override // Doesnt work, it wont change the password
     public UserDto update(Integer id, @Valid UserDto userDto) {
         var user = findById(id);
@@ -159,6 +159,12 @@ public class UserServiceImplements implements UserService{
                 .orElseThrow(()-> new ResourceNotFoundException(String
                         .format("User with id %s do not exist",id)));
     }
+    @Override
+    public User findUserWithAppointmentsForDate(Integer userId, LocalDateTime date) {
+        LocalDateTime nextDate = date.plusDays(1);
+
+        return userRepository.findUserWithAppointmentsForDate(userId, date, nextDate);
+    }
 
     @Override // Works don't touch
     public List<UserDto> findAll() {
@@ -171,6 +177,11 @@ public class UserServiceImplements implements UserService{
         toDelete.setDeleted(true);
         userRepository.save(toDelete);
     }
+
+
+
+
+
 
 
 }

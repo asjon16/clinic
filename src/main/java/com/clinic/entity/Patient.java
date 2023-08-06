@@ -21,6 +21,8 @@ public class Patient extends BaseEntity<Integer>{
     private String name;
     @Column(name = "patient_age")
     private Integer age;
+    @Column(name = "nId")
+    private Integer nId;
     @Enumerated(EnumType.STRING)
     private Gender gender;
 

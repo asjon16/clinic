@@ -1,9 +1,13 @@
 package com.clinic.service;
 
 import com.clinic.domain.dto.*;
+import com.clinic.entity.Appointments;
+import com.clinic.entity.DoctorSchedule;
 import com.clinic.entity.User;
 import jakarta.validation.Valid;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface UserService {
@@ -22,11 +26,12 @@ public interface UserService {
     /*UserDto registerDetailsDoctor(@Valid RegisterForm form);*/
     UserDto update(Integer id,@Valid UserDto user);
     User findById(Integer id);
+
+    User findUserWithAppointmentsForDate(Integer userId, LocalDateTime date);
+
     List<UserDto> findAll();
     UserDto updateDoctorSchedule(Integer id, DoctorScheduleDto doctorScheduleDto);
     void deleteById(Integer id);
-
-
 
 
 

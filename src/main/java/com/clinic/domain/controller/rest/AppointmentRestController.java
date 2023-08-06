@@ -3,13 +3,17 @@ package com.clinic.domain.controller.rest;
 import com.clinic.domain.dto.AppointmentsDto;
 import com.clinic.domain.dto.DepartmentsDto;
 import com.clinic.domain.dto.PatientDto;
+import com.clinic.entity.Appointments;
 import com.clinic.entity.Patient;
 import com.clinic.service.AppointmentService;
+import com.clinic.service.DoctorScheduleService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static com.clinic.domain.mapper.AppointmentsMapper.toDto;
@@ -21,6 +25,7 @@ import static com.clinic.domain.mapper.AppointmentsMapper.toDto;
 public class AppointmentRestController {
 
     private final AppointmentService appointmentService;
+
     @PostMapping("/create/{id}") //does the job needs rework
     public ResponseEntity<AppointmentsDto> createAppointment(@PathVariable Integer id,@RequestBody PatientDto p){
         return ResponseEntity.ok(appointmentService.create(id,p));
@@ -51,4 +56,5 @@ public class AppointmentRestController {
         appointmentService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
 }

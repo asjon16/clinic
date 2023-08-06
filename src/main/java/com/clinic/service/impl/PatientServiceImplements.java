@@ -1,10 +1,8 @@
 package com.clinic.service.impl;
 
-import com.clinic.domain.dto.AppointmentsDto;
 import com.clinic.domain.dto.PatientDto;
-import com.clinic.domain.dto.UserDto;
+import com.clinic.domain.exception.ResourceAlreadyExistsException;
 import com.clinic.domain.exception.ResourceNotFoundException;
-import com.clinic.domain.mapper.AppointmentsMapper;
 import com.clinic.domain.mapper.PatientMapper;
 import com.clinic.entity.Gender;
 import com.clinic.entity.Patient;
@@ -30,9 +28,23 @@ public class PatientServiceImplements implements PatientService {
 
     @Override
     public PatientDto create(@Valid PatientDto patient) {
-        var result = patientRepository.save(toEntity(patient));
-        return toDto(result);
+        var result = toEntity(patient);
+        if (findByNId(patient.getNId())){
+            patientRepository.save(result);
+        }else {
+            throw new ResourceAlreadyExistsException("Patient already exists.");
+        }
+
+     return toDto(result);
     }
+
+    @Override
+    public Boolean findByNId(Integer id) {
+        if (patientRepository.findByNId(id) == null) {
+            return true;
+        } else return false;
+    }
+
 
     @Override
     public PatientDto update(Integer id, @Valid PatientDto patientDto) {

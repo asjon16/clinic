@@ -3,14 +3,19 @@ package com.clinic.domain.controller.rest;
 import com.clinic.domain.dto.DepartmentsDto;
 import com.clinic.domain.dto.DoctorScheduleDto;
 import com.clinic.domain.dto.UserDto;
+import com.clinic.entity.Appointments;
+import com.clinic.entity.DoctorSchedule;
 import com.clinic.entity.User;
 import com.clinic.service.DoctorScheduleService;
 import com.clinic.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -53,11 +58,19 @@ public class UserRestController {
         return ResponseEntity.ok((userService.findAllDoctorsByDepartmentId(departmentId)));
     }
 
+    @GetMapping("/{id}/appointments")
+    public ResponseEntity<User> getUserWithAppointmentsForDate(
+            @PathVariable Integer id,
+            @RequestParam("date") LocalDateTime date) {
+        User user = userService.findUserWithAppointmentsForDate(id, date);
+        return ResponseEntity.ok(user);
+    }
 
     @GetMapping("/schedule/{id}") // works keep working on it
     public ResponseEntity<DoctorScheduleDto> getScheduleOfDoctorWithDoctorId(@PathVariable Integer id){
         return ResponseEntity.ok((userService.getDoctorScheduleByDoctorId(id)));
     }
+
 
     @GetMapping //Works don't touch
     public ResponseEntity<List<UserDto>> getUsers(){
@@ -77,7 +90,6 @@ public class UserRestController {
 
 
     }
-
 
 
 }
