@@ -1,5 +1,6 @@
 package com.clinic.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -36,7 +37,7 @@ public class User extends BaseEntity<Integer> implements UserDetails {
     @JoinColumn(name = "department_id", referencedColumnName = "id")
     private Departments doctorDepartment;
 
-
+    @JsonManagedReference
     @OneToOne
     @JoinColumn(name = "schedule_id", referencedColumnName = "id")
     private DoctorSchedule schedule ;

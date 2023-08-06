@@ -59,10 +59,10 @@ public class UserRestController {
     }
 
     @GetMapping("/{id}/appointments")
-    public ResponseEntity<User> getUserWithAppointmentsForDate(
+    public ResponseEntity<UserDto> getUserWithAppointmentsForDate(
             @PathVariable Integer id,
             @RequestParam("date") LocalDateTime date) {
-        User user = userService.findUserWithAppointmentsForDate(id, date);
+        UserDto user = userService.findUserWithAppointmentsForDate(id, date);
         return ResponseEntity.ok(user);
     }
 

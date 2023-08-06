@@ -1,6 +1,7 @@
 package com.clinic.entity;
 
 import com.clinic.domain.dto.DoctorScheduleDto;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,11 +28,12 @@ public class Appointments extends BaseEntity<Integer>{
 
     private LocalDateTime endOfAppointment ;//=startOfAppointment.plusHours(1);
 
+    @JsonManagedReference
     @ManyToOne
     @JoinColumn(name = "patient_id")
     private Patient patient;
 
-
+    @JsonManagedReference
     @ManyToOne
     @JoinColumn(name = "schedule_id",referencedColumnName = "id")
     private DoctorSchedule doctorSchedule;

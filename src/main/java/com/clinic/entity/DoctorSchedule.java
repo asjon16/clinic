@@ -1,5 +1,6 @@
 package com.clinic.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -23,9 +24,11 @@ public class DoctorSchedule extends BaseEntity<Integer>{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @JsonBackReference
     @OneToMany(mappedBy = "doctorSchedule",cascade = CascadeType.ALL)
     private List<Appointments> appointments ;
 
+    @JsonBackReference
     @OneToOne(mappedBy = "schedule",cascade = CascadeType.ALL)
     private User doctor;
 

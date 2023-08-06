@@ -1,5 +1,6 @@
 package com.clinic.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,6 +27,7 @@ public class Patient extends BaseEntity<Integer>{
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
+    @JsonBackReference
     @OneToMany(mappedBy = "patient",cascade = CascadeType.ALL)
     private List<Appointments> appointment;
 

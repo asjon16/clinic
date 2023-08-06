@@ -27,7 +27,7 @@ public interface UserService {
     UserDto update(Integer id,@Valid UserDto user);
     User findById(Integer id);
 
-    User findUserWithAppointmentsForDate(Integer userId, LocalDateTime date);
+    UserDto findUserWithAppointmentsForDate(Integer userId, LocalDateTime date);
 
     List<UserDto> findAll();
     UserDto updateDoctorSchedule(Integer id, DoctorScheduleDto doctorScheduleDto);

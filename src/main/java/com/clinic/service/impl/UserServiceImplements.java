@@ -160,10 +160,10 @@ public class UserServiceImplements implements UserService{
                         .format("User with id %s do not exist",id)));
     }
     @Override
-    public User findUserWithAppointmentsForDate(Integer userId, LocalDateTime date) {
+    public UserDto findUserWithAppointmentsForDate(Integer userId, LocalDateTime date) {
         LocalDateTime nextDate = date.plusDays(1);
 
-        return userRepository.findUserWithAppointmentsForDate(userId, date, nextDate);
+        return toDto(userRepository.findUserWithAppointmentsForDate(userId, date, nextDate));
     }
 
     @Override // Works don't touch
