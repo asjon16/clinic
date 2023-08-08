@@ -8,5 +8,5 @@ import org.springframework.data.repository.query.Param;
 public interface PatientRepository extends JpaRepository<Patient,Integer> {
 
     @Query("SELECT p FROM Patient p WHERE p.nId = :nId")
-    Patient findByNId(Integer nId);
+    Patient findByNId(@Param("nId") Integer nId);
 }

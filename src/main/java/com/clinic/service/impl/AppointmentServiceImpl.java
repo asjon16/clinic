@@ -24,6 +24,7 @@ import static com.clinic.domain.mapper.AppointmentsMapper.*;
 public class AppointmentServiceImpl implements AppointmentService {
 
     private final AppointmentRepository appointmentRepository;
+
     private final PatientService patientService;
 
 
@@ -47,6 +48,7 @@ public class AppointmentServiceImpl implements AppointmentService {
        var appointment = toEntityNoPatients(appointmentsDto);
         var patient = patientService.findById(patientId);
         appointment.setPatient(patient);
+        if (appointment.getPatient()==appointmentRepository.findAll().stream().map(Appointments::getPatient))
         appointmentRepository.save(appointment);
         return toDto(appointment);
     }

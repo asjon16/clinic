@@ -135,6 +135,10 @@ public class UserServiceImplements implements UserService{
             } else if (existingAppointment.getId().equals(appointmentId)) {
                 throw new AppointmentAlreadyAssignedException(String.format("Appointment with id %s already assigned to the doctor.", appointmentId));
             }
+        } // this one is updated
+        if (appointment.getStartOfAppointment().isAfter(doctorSchedule.getStartTime())||appointment.getStartOfAppointment().isAfter(doctorSchedule.getEndTime())
+        ||appointment.getEndOfAppointment().isBefore(doctorSchedule.getStartTime())||appointment.getEndOfAppointment().isAfter(doctorSchedule.getEndTime())){
+            throw new TimeOverlapException("That appointment is during the doctor's hours");
         }
        appointments.add(appointment);
        doctorScheduleRepository.save(doctorSchedule);
