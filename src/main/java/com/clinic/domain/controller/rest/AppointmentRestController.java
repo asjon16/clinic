@@ -40,6 +40,16 @@ public class AppointmentRestController {
             (@PathVariable Integer patientId, @RequestBody AppointmentsDto appointmentsDto){
         return ResponseEntity.ok(appointmentService.createNewWithRegisteredPatient(appointmentsDto,patientId));
     }
+    @PostMapping("/creates/check/{patientId}") //testing
+    public ResponseEntity<List<Appointments>> checkIfPatientHasAppointmentAtThatTimeThenCreate
+            (@PathVariable Integer patientId,@RequestBody AppointmentsDto appointmentsDto){
+        return ResponseEntity.ok(appointmentService.findAllByPatient_idAndStartOfAppointmentAndEndOfAppointment(patientId,appointmentsDto.getStartOfAppointment(),appointmentsDto.getEndOfAppointment()));
+    }
+    @PutMapping("/update/{patientId}") //works
+    public ResponseEntity<AppointmentsDto> updateAppointmentWithId
+            (@PathVariable Integer patientId, @RequestBody AppointmentsDto appointmentsDto){
+        return ResponseEntity.ok(appointmentService.updateById(patientId,appointmentsDto));
+    }
 
     @GetMapping("/{id}") //not tested
     public ResponseEntity<AppointmentsDto> getAppointmentById(@PathVariable Integer id){

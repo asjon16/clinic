@@ -138,7 +138,7 @@ public class UserServiceImplements implements UserService{
         } // this one is updated
         if (appointment.getStartOfAppointment().isAfter(doctorSchedule.getStartTime())||appointment.getStartOfAppointment().isAfter(doctorSchedule.getEndTime())
         ||appointment.getEndOfAppointment().isBefore(doctorSchedule.getStartTime())||appointment.getEndOfAppointment().isAfter(doctorSchedule.getEndTime())){
-            throw new TimeOverlapException("That appointment is during the doctor's hours");
+            throw new TimeOverlapException("That appointment is outside the doctor's hours");
         }
        appointments.add(appointment);
        doctorScheduleRepository.save(doctorSchedule);

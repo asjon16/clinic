@@ -9,6 +9,7 @@ import com.clinic.entity.Patient;
 import com.clinic.entity.User;
 import jakarta.validation.Valid;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface AppointmentService {
@@ -21,6 +22,8 @@ public interface AppointmentService {
     /*  AppointmentsDto update(Integer id,@Valid AppointmentsDto appointment);*/
     Appointments findById(Integer id);
     List<AppointmentsDto> findAll();
+    AppointmentsDto updateById(Integer id,AppointmentsDto appointmentsDto);
+    List<Appointments>findAllByPatient_idAndStartOfAppointmentAndEndOfAppointment (Integer patientId, LocalDateTime start, LocalDateTime end);
 
     void deleteById(Integer id);
 }
