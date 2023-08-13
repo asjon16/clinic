@@ -3,6 +3,7 @@ package com.clinic.domain.controller.rest;
 import com.clinic.domain.dto.AppointmentsDto;
 import com.clinic.domain.dto.DepartmentsDto;
 import com.clinic.domain.dto.PatientDto;
+import com.clinic.domain.mapper.AppointmentsMapper;
 import com.clinic.entity.Appointments;
 import com.clinic.entity.Patient;
 import com.clinic.service.AppointmentService;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.clinic.domain.mapper.AppointmentsMapper.toDto;
 
@@ -26,25 +28,6 @@ public class AppointmentRestController {
 
     private final AppointmentService appointmentService;
 
-    @PostMapping("/create/{id}") //does the job needs rework
-    public ResponseEntity<AppointmentsDto> createAppointment(@PathVariable Integer id,@RequestBody PatientDto p){
-        return ResponseEntity.ok(appointmentService.create(id,p));
-    }
-   @PostMapping("/create") // does her job
-    public ResponseEntity<AppointmentsDto> createAppointmentNoPatients(@RequestBody AppointmentsDto a){
-        return ResponseEntity.ok(appointmentService.createNoPatients(a));
-    }
-
-    @PostMapping("/creates/{patientId}") //testing
-    public ResponseEntity<AppointmentsDto> createNewAppointmentWithRegisteredPatient
-            (@PathVariable Integer patientId, @RequestBody AppointmentsDto appointmentsDto){
-        return ResponseEntity.ok(appointmentService.createNewWithRegisteredPatient(appointmentsDto,patientId));
-    }
-    @PostMapping("/creates/check/{patientId}") //testing
-    public ResponseEntity<List<Appointments>> checkIfPatientHasAppointmentAtThatTimeThenCreate
-            (@PathVariable Integer patientId,@RequestBody AppointmentsDto appointmentsDto){
-        return ResponseEntity.ok(appointmentService.findAllByPatient_idAndStartOfAppointmentAndEndOfAppointment(patientId,appointmentsDto.getStartOfAppointment(),appointmentsDto.getEndOfAppointment()));
-    }
     @PutMapping("/update/{patientId}") //works
     public ResponseEntity<AppointmentsDto> updateAppointmentWithId
             (@PathVariable Integer patientId, @RequestBody AppointmentsDto appointmentsDto){
@@ -54,6 +37,10 @@ public class AppointmentRestController {
     @GetMapping("/{id}") //not tested
     public ResponseEntity<AppointmentsDto> getAppointmentById(@PathVariable Integer id){
         return ResponseEntity.ok(toDto(appointmentService.findById(id)));
+    }
+    @GetMapping("/patient/{id}") //not tested
+    public ResponseEntity<List<AppointmentsDto>> getPatientAppointments(@PathVariable Integer id){
+        return ResponseEntity.ok(appointmentService.findAllAppointmentByPatient_id(id));
     }
 
     @GetMapping // not tested

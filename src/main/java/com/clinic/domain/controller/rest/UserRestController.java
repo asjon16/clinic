@@ -1,5 +1,6 @@
 package com.clinic.domain.controller.rest;
 
+import com.clinic.domain.dto.AppointmentsDto;
 import com.clinic.domain.dto.DepartmentsDto;
 import com.clinic.domain.dto.DoctorScheduleDto;
 import com.clinic.domain.dto.UserDto;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -31,21 +33,21 @@ public class UserRestController {
     private final UserService userService;
 
 
-    @PostMapping("/create") // works but don't use.
-    public ResponseEntity<UserDto> createUser(@RequestBody UserDto u){
-        return ResponseEntity.ok(userService.create(u));
-    }
-
-    @PutMapping("/{id}") //Doesn't work, wont change password
+    @PutMapping("/{id}")
     public ResponseEntity<UserDto> updateUser(@PathVariable Integer id, @RequestBody UserDto u){
         return ResponseEntity.ok(userService.update(id,u));
     }
-    @PutMapping("/doctor/schedule/{doctorId}") // Testing
-    public ResponseEntity<UserDto> addAppointmentToDoctorSchedule(@PathVariable Integer doctorId, @RequestBody Integer appointmentId){
-        return ResponseEntity.ok(userService.assignAnAppointment(doctorId,appointmentId));
+    @GetMapping("/schedule/{id}") // works keep working on it
+    public ResponseEntity<DoctorScheduleDto> getScheduleOfDoctorWithDoctorId(@PathVariable Integer id){
+        return ResponseEntity.ok((userService.getDoctorScheduleByDoctorId(id)));
     }
+    @PutMapping("/doctor/schedule/{doctorId}") // Works
+    public ResponseEntity<UserDto> addAppointmentToDoctorSchedule(@PathVariable Integer doctorId, @RequestBody AppointmentsDto appointmentId, @RequestParam Integer patientId){
+        return ResponseEntity.ok(userService.assignAnAppointment(doctorId,appointmentId,patientId));
+    }
+
     @PutMapping("/doctor/{id}") // Works don't touch
-    public ResponseEntity<UserDto> assignDoctorToDepartment(@PathVariable Integer id, @RequestBody Integer d){
+    public ResponseEntity<UserDto> assignDoctorToDepartment(@PathVariable Integer id, @RequestParam Integer d){
         return ResponseEntity.ok(userService.assignDoctorToDepartment(id,d));
     }
 
@@ -66,22 +68,17 @@ public class UserRestController {
         return ResponseEntity.ok(user);
     }
 
-    @GetMapping("/schedule/{id}") // works keep working on it
-    public ResponseEntity<DoctorScheduleDto> getScheduleOfDoctorWithDoctorId(@PathVariable Integer id){
-        return ResponseEntity.ok((userService.getDoctorScheduleByDoctorId(id)));
-    }
-
 
     @GetMapping //Works don't touch
     public ResponseEntity<List<UserDto>> getUsers(){
         return ResponseEntity.ok(userService.findAll());
     }
-
     @DeleteMapping("/{id}") // Works don't touch
     public ResponseEntity<Void> deleteUser(@PathVariable Integer id){
         userService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
     @PutMapping("/assign/{id}")
     public ResponseEntity<UserDto>assignScheduleToDoctor
             (@PathVariable Integer id,@RequestBody DoctorScheduleDto doctorScheduleDto){

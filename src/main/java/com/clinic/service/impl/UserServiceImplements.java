@@ -1,7 +1,9 @@
 package com.clinic.service.impl;
 
+import com.clinic.configuration.SecurityUtils;
 import com.clinic.domain.dto.*;
 import com.clinic.domain.exception.*;
+import com.clinic.domain.mapper.AppointmentsMapper;
 import com.clinic.domain.mapper.DoctorScheduleMapper;
 import com.clinic.domain.mapper.UserMapper;
 import com.clinic.entity.*;
@@ -17,15 +19,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 
 import static com.clinic.domain.mapper.UserMapper.toDto;
-import static com.clinic.domain.mapper.UserMapper.toEntity;
 
 @RequiredArgsConstructor
 @Validated
@@ -53,19 +54,36 @@ public class UserServiceImplements implements UserService{
         user.setPassword(passwordEncoder.encode(form.getPassword()));
         user.setFirstname(form.getFirstname());
         user.setLastname(form.getLastname());
-        user.setRole(UserRole.fromValue(form.getRole()));
-        if (user.getRole().equals(UserRole.DOCTOR)){
-            user.setSchedule(scheduleOfDoctor);
-            doctorScheduleRepository.save(scheduleOfDoctor);
-        }
+        user.setRole(UserRole.fromValue("DOCTOR"));
+        user.setSchedule(scheduleOfDoctor);
+        doctorScheduleRepository.save(scheduleOfDoctor);
         return toDto(userRepository.save(user));
     }
 
-    @Override // Works but don't use it -- register details does the job.
-    public UserDto create(@Valid UserDto user) {
-        var result = userRepository.save(toEntity(user));
-        return toDto(result);
+    @Transactional
+    @Override // Works don't touch
+    public UserDto registerDetailsForWorker(@Valid RegisterForm form) {
+        var user= new User();
+        user.setEmail(form.getEmail());
+        user.setPassword(passwordEncoder.encode(form.getPassword()));
+        user.setFirstname(form.getFirstname());
+        user.setLastname(form.getLastname());
+        user.setRole(UserRole.fromValue("WORKER"));
+        return toDto(userRepository.save(user));
     }
+    @Transactional
+    @Override // Works don't touch
+    public UserDto registerDetailsForAdmin(@Valid RegisterForm form) {
+        var user= new User();
+        user.setEmail(form.getEmail());
+        user.setPassword(passwordEncoder.encode(form.getPassword()));
+        user.setFirstname(form.getFirstname());
+        user.setLastname(form.getLastname());
+        user.setRole(UserRole.fromValue("ADMIN"));
+        return toDto(userRepository.save(user));
+    }
+
+
     @Transactional
     @Override // Works don't touch - works - might update
     public UserDto assignDoctorToDepartment(Integer doctorId, Integer departmentId) {
@@ -94,13 +112,25 @@ public class UserServiceImplements implements UserService{
         return doctors.stream().map(UserMapper::toDto).collect(Collectors.toList());
     }
 
+    @Transactional
     @Override // ndryshon orarin e punes te doktorit -- works dont touch !!!!
     public UserDto updateDoctorSchedule(Integer id, DoctorScheduleDto doctorScheduleDto) {
+        var loggedUser = SecurityUtils.getLoggedUserId();
         var user = findById(id);
         if (user.getRole()==UserRole.WORKER){
             throw new WrongRoleException(String.format("User with id %s is a 'worker', and doesnt have a schedule",id));
         }
+        if (!Objects.equals(id, loggedUser) && !(findById(loggedUser).getRole()==UserRole.ADMIN)){
+            throw new WrongRoleException(String.format("User with id %s cannot change the schedule",loggedUser));
+        }
         var schedule = user.getSchedule();
+        List<Appointments> appointments = schedule.getAppointments();
+        for (Appointments a: appointments) {
+            if (doctorScheduleDto.getStartTime().isAfter(a.getStartOfAppointment())||doctorScheduleDto.getStartTime().isAfter(a.getEndOfAppointment())||
+            doctorScheduleDto.getEndTime().isBefore(a.getStartOfAppointment())||doctorScheduleDto.getEndTime().isBefore(a.getEndOfAppointment())){
+                throw new TimeOverlapException(("Schedule time update overlaps with some of the appointments, please cancel those before doing the change."));
+            }
+        }
         doctorScheduleService.updateSchedule(schedule.getId(),doctorScheduleDto);
         user.setSchedule(schedule);
         return toDto(user);
@@ -113,17 +143,22 @@ public class UserServiceImplements implements UserService{
         }
         return DoctorScheduleMapper.toDto(doctor.getSchedule());
     }
+
     private boolean isTimeOverlap(LocalDateTime start1, LocalDateTime end1, LocalDateTime start2, LocalDateTime end2) {
         return start1.isBefore(end2) && end1.isAfter(start2);
     }
-    //transactional
+
+    //WORKS DONT TOUCH!
     @Override
-    @Transactional
-    public UserDto assignAnAppointment(Integer doctorId, Integer appointmentId){
+    @Transactional // Krijon nje appointment te schedule i doktorit qe fusim me ID me pacientin qe kemi regjistruar
+    public UserDto assignAnAppointment(Integer doctorId, AppointmentsDto appointmentsDto, Integer patientId){
         var doctor = findById(doctorId);
         var doctorSchedule = doctor.getSchedule();
-        var appointment = appointmentService.findById(appointmentId);
-        appointment.setDoctorSchedule(doctorSchedule);
+        var patient = patientService.findById(patientId);
+        var appointment = appointmentService.createNewWithRegisteredPatient(appointmentsDto,patientId);
+        var appointmentButEntity= AppointmentsMapper.toEntity(appointment);
+        appointmentButEntity.setPatient(patient);
+        appointmentButEntity.setDoctorSchedule(doctorSchedule);
        List<Appointments> appointments= doctorSchedule.getAppointments();
        if (appointments == null){
            appointments=new ArrayList<>();
@@ -132,27 +167,28 @@ public class UserServiceImplements implements UserService{
             if (isTimeOverlap(appointment.getStartOfAppointment(), appointment.getEndOfAppointment(),
                     existingAppointment.getStartOfAppointment(), existingAppointment.getEndOfAppointment())) {
                 throw new TimeOverlapException("That time slot is taken by another appointment, please try another hour.");
-            } else if (existingAppointment.getId().equals(appointmentId)) {
-                throw new AppointmentAlreadyAssignedException(String.format("Appointment with id %s already assigned to the doctor.", appointmentId));
+            } else if (existingAppointment.getId().equals(appointmentButEntity.getId())) {
+                throw new AppointmentAlreadyAssignedException(String.format("Appointment with id %s already assigned to the doctor.", appointmentsDto));
             }
-        } // this one is updated
-        if (appointment.getStartOfAppointment().isAfter(doctorSchedule.getStartTime())||appointment.getStartOfAppointment().isAfter(doctorSchedule.getEndTime())
+        }
+        if (appointment.getStartOfAppointment().isBefore(doctorSchedule.getStartTime())||appointment.getStartOfAppointment().isAfter(doctorSchedule.getEndTime())
         ||appointment.getEndOfAppointment().isBefore(doctorSchedule.getStartTime())||appointment.getEndOfAppointment().isAfter(doctorSchedule.getEndTime())){
             throw new TimeOverlapException("That appointment is outside the doctor's hours");
         }
-       appointments.add(appointment);
+        appointmentRepository.save(appointmentButEntity);
+       appointments.add(appointmentButEntity);
        doctorScheduleRepository.save(doctorSchedule);
        userRepository.save(doctor);
        return toDto(doctor);
 
     }
 
-    @Override // Doesnt work, it wont change the password
+
+    @Override // to update only name and last name
     public UserDto update(Integer id, @Valid UserDto userDto) {
         var user = findById(id);
         user.setFirstname(userDto.getFirstname());
         user.setLastname(userDto.getLastname());
-        user.setPassword(user.getPassword());
         userRepository.save(user);
         return toDto(user);
     }
@@ -166,8 +202,11 @@ public class UserServiceImplements implements UserService{
     @Override
     public UserDto findUserWithAppointmentsForDate(Integer userId, LocalDateTime date) {
         LocalDateTime nextDate = date.plusDays(1);
-
-        return toDto(userRepository.findUserWithAppointmentsForDate(userId, date, nextDate));
+        var user = findById(userId);
+        var scheduleOfUser = user.getSchedule();
+        if ((scheduleOfUser.getAppointments()==null)){
+            throw new ResourceNotFoundException(String.format("User with id %s doesn't have any appointments on that day",userId));
+        }else return toDto(userRepository.findUserWithAppointmentsForDate(userId, date, nextDate));
     }
 
     @Override // Works don't touch
@@ -181,6 +220,7 @@ public class UserServiceImplements implements UserService{
         toDelete.setDeleted(true);
         userRepository.save(toDelete);
     }
+
 
 
 

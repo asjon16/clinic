@@ -46,13 +46,6 @@ public class DoctorScheduleServiceImpl implements DoctorScheduleService {
     }
 
     @Override
-    public List<DoctorScheduleDto> findAll() {
-        return doctorScheduleRepository.findAll().stream().map(DoctorScheduleMapper::toDto).collect(Collectors.toList());
-    }
-
-
-
-    @Override
     public void deleteById(Integer id) {
         var toDelete= findById(id);
         doctorScheduleRepository.delete(toDelete);

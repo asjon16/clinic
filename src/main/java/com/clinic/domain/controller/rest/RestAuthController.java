@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,13 +37,38 @@ public class RestAuthController {
         }
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<UserDto> register(@RequestBody @Valid RegisterForm user, BindingResult bindingResult) {
+    @PostMapping("/register/doctor")
+    public ResponseEntity<UserDto> registerDoctor(@RequestBody @Valid RegisterForm user, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest().build();
+        }
+        UserDto registeredUser = userService.registerDetails(user);
+        if (registeredUser != null) {
+            return ResponseEntity.ok(registeredUser);
+        } else {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+    }
+    @PostMapping("/register/admin")
+    public ResponseEntity<UserDto> registerAdmin(@RequestBody @Valid RegisterForm user, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.badRequest().build();
         }
 
-        UserDto registeredUser = userService.registerDetails(user);
+        UserDto registeredUser = userService.registerDetailsForAdmin(user);
+        if (registeredUser != null) {
+            return ResponseEntity.ok(registeredUser);
+        } else {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+    }
+    @PostMapping("/register/worker")
+    public ResponseEntity<UserDto> registerWorker(@RequestBody @Valid RegisterForm user, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        UserDto registeredUser = userService.registerDetailsForWorker(user);
         if (registeredUser != null) {
             return ResponseEntity.ok(registeredUser);
         } else {

@@ -22,7 +22,7 @@ public class DepartmentRestController {
     public ResponseEntity<DepartmentsDto> createDepartment(@RequestBody DepartmentsDto d){
         return ResponseEntity.ok(departmentService.createNoUsers(d));
     }
-    @PutMapping("/test/{id}")// Works don't touch
+    @PutMapping("/update/{id}")// Works don't touch
     public ResponseEntity<DepartmentsDto> updateDepartmentNoUsers(@PathVariable Integer id, @RequestBody DepartmentsDto d){
         return ResponseEntity.ok(departmentService.updateDepartmentNoUsers(id,d));
     }

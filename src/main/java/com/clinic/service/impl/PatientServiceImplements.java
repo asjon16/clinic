@@ -52,6 +52,7 @@ public class PatientServiceImplements implements PatientService {
         patient.setName(patientDto.getName());
         patient.setAge(patientDto.getAge());
         patient.setGender(Gender.valueOf(patientDto.getGender()));
+        patient.setNId(patientDto.getNId());
         patientRepository.save(patient);
         return toDto(patient);
     }
@@ -72,7 +73,11 @@ public class PatientServiceImplements implements PatientService {
     @Override
     public void deleteById(Integer id) {
         var toDelete = findById(id);
+        if (!toDelete.getAppointment().isEmpty()){
+            throw new ResourceAlreadyExistsException(String.format("You cannot delete the patient with id %s as he has an appointment active!",id));
+        }else {
         toDelete.setDeleted(true);
         patientRepository.save(toDelete);
+        }
     }
 }

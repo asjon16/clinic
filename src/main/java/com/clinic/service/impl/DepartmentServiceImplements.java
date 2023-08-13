@@ -32,17 +32,12 @@ public class DepartmentServiceImplements implements DepartmentService {
     private final DepartmentRepository departmentRepository;
 
 
-   /* @Override //Works don't touch
-    public DepartmentsDto createNoUsers(@Valid DepartmentsDto departments) {
-        var result = departmentRepository.save(toEntityNoUsers(departments));
-        return toDtoNoUsers(result);
-    }*/
 
     @Override //Works don't touch -- updated version
     public DepartmentsDto createNoUsers(@Valid DepartmentsDto departments) {
         var result = toEntityNoUsers(departments);
         List<DepartmentsDto> allDepartments = findAll();
-        if (allDepartments==null ||(allDepartments.stream().noneMatch(d -> d.getName().equals(departments.getName())))){
+        if (allDepartments==null ||(allDepartments.stream().noneMatch(d -> d.getName().equalsIgnoreCase(departments.getName())))){
             departmentRepository.save(result);
         }else{
             throw new ResourceAlreadyExistsException("That department already exists!");

@@ -7,7 +7,8 @@ import java.util.Arrays;
 public enum UserRole {
 
     WORKER("WORKER"),
-    DOCTOR("DOCTOR");
+    DOCTOR("DOCTOR"),
+    ADMIN("ADMIN");
 
     private String value;
 

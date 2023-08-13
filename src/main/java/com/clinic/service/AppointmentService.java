@@ -14,17 +14,15 @@ import java.util.List;
 
 public interface AppointmentService {
 
-    AppointmentsDto createNoPatients(@Valid AppointmentsDto appointment);
-    AppointmentsDto create(Integer id, PatientDto patient);
 
     AppointmentsDto createNewWithRegisteredPatient(AppointmentsDto appointmentsDto, Integer patientId);
 
-    /*  AppointmentsDto update(Integer id,@Valid AppointmentsDto appointment);*/
     Appointments findById(Integer id);
     List<AppointmentsDto> findAll();
     AppointmentsDto updateById(Integer id,AppointmentsDto appointmentsDto);
-    List<Appointments>findAllByPatient_idAndStartOfAppointmentAndEndOfAppointment (Integer patientId, LocalDateTime start, LocalDateTime end);
 
+    List<AppointmentsDto> findAllAppointmentByPatient_id(Integer patientId);
     void deleteById(Integer id);
+
 }
 
