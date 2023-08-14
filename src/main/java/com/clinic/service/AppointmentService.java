@@ -22,6 +22,7 @@ public interface AppointmentService {
     AppointmentsDto updateById(Integer id,AppointmentsDto appointmentsDto);
 
     List<AppointmentsDto> findAllAppointmentByPatient_id(Integer patientId);
+
     void deleteById(Integer id);
 
 }

@@ -13,5 +13,9 @@ import java.util.List;
 
 public interface DoctorScheduleRepository extends JpaRepository<DoctorSchedule,Integer> {
 
-
+    @Query("SELECT COUNT(s) > 0 FROM DoctorSchedule s " +
+            "WHERE s.id = :scheduleId " +
+            "AND :appointmentStartTime >= s.startTime " +
+            "AND :appointmentEndTime <= s.endTime")
+    boolean isAppointmentWithinDoctorSchedule(Integer scheduleId, LocalDateTime appointmentStartTime, LocalDateTime appointmentEndTime);
 }

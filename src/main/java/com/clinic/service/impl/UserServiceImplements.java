@@ -183,6 +183,38 @@ public class UserServiceImplements implements UserService{
 
     }
 
+    @Override
+    @Transactional // Krijon nje appointment te schedule i doktorit qe fusim me ID me pacientin qe kemi regjistruar
+    public UserDto testForUpdate(Integer doctorId, AppointmentsDto appointmentsDto, Integer patientId){
+        if (appointmentsDto.getEndOfAppointment().isEqual(appointmentsDto.getStartOfAppointment())||
+                (appointmentsDto.getEndOfAppointment().isBefore(appointmentsDto.getStartOfAppointment()))){
+            throw new TimeOverlapException("The times given are not correct, please double check");
+        }
+        var doctor = findById(doctorId);
+        var doctorSchedule = doctor.getSchedule();
+        var patient = patientService.findById(patientId);
+        var appointment = appointmentService.createNewWithRegisteredPatient(appointmentsDto,patientId);
+        var appointmentButEntity= AppointmentsMapper.toEntity(appointment);
+        appointmentButEntity.setPatient(patient);
+        appointmentButEntity.setDoctorSchedule(doctorSchedule);
+        List<Appointments> appointments= doctorSchedule.getAppointments();
+        if (appointments == null){
+            appointments=new ArrayList<>();
+        }
+        if (appointmentRepository.hasOverlappingAppointments(doctorSchedule.getId(),appointmentsDto.getStartOfAppointment(),appointmentsDto.getEndOfAppointment())){
+            throw new TimeOverlapException("That time slot is taken by another appointment, please try another hour.");
+        }
+        if (!doctorScheduleRepository.isAppointmentWithinDoctorSchedule(doctorSchedule.getId(),appointmentsDto.getStartOfAppointment(),appointmentsDto.getEndOfAppointment())){
+            throw new TimeOverlapException("That appointment is outside the doctor's hours");
+        }
+        appointmentRepository.save(appointmentButEntity);
+        appointments.add(appointmentButEntity);
+        doctorScheduleRepository.save(doctorSchedule);
+        userRepository.save(doctor);
+        return toDto(doctor);
+
+    }
+
 
     @Override // to update only name and last name
     public UserDto update(Integer id, @Valid UserDto userDto) {

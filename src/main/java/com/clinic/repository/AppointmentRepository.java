@@ -14,5 +14,14 @@ public interface AppointmentRepository extends JpaRepository<Appointments,Intege
     List<Appointments>findAllByPatient_idAndStartOfAppointmentAndEndOfAppointment (Integer patientId, LocalDateTime start, LocalDateTime end);
     List<Appointments> findAllAppointmentByPatient_id(Integer patientId);
 
+    @Query("SELECT COUNT(a) > 0 FROM Appointments a " +
+            "WHERE a.doctorSchedule.id = :scheduleId " +
+            "AND ((a.startOfAppointment < :endTime AND a.endOfAppointment > :startTime) " +
+            "OR (a.startOfAppointment > :startTime AND a.startOfAppointment < :endTime))")
+    boolean hasOverlappingAppointments(Integer scheduleId, LocalDateTime startTime, LocalDateTime endTime);
+
+
+
+
 }
 

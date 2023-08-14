@@ -10,6 +10,7 @@ import com.clinic.domain.mapper.AppointmentsMapper;
 import com.clinic.domain.mapper.PatientMapper;
 import com.clinic.entity.Appointments;
 import com.clinic.repository.AppointmentRepository;
+import com.clinic.repository.DoctorScheduleRepository;
 import com.clinic.repository.PatientRepository;
 import com.clinic.service.AppointmentService;
 import com.clinic.service.PatientService;
@@ -33,6 +34,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     private final PatientService patientService;
     private final PatientRepository patientRepository;
+    private final DoctorScheduleRepository doctorScheduleRepository;
 
 
     @Override // works
@@ -57,19 +59,16 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Transactional
     @Override // WORKS
     public AppointmentsDto updateById(Integer id,AppointmentsDto appointmentsDto){
+        if (appointmentsDto.getEndOfAppointment().isEqual(appointmentsDto.getStartOfAppointment())||
+                (appointmentsDto.getEndOfAppointment().isBefore(appointmentsDto.getStartOfAppointment()))){
+            throw new TimeOverlapException("The times given are not correct, please double check");
+        }
         var appointment = findById(id);
         var schedule = appointment.getDoctorSchedule();
-        var doctor = schedule.getDoctor();
-        var patient = appointment.getPatient();
-        List<Appointments>doctorsAppointments = schedule.getAppointments();
-        for (Appointments existingAppointment : doctorsAppointments) {
-            if (isTimeOverlap(appointmentsDto.getStartOfAppointment(), appointmentsDto.getEndOfAppointment(),
-                    existingAppointment.getStartOfAppointment(), existingAppointment.getEndOfAppointment())) {
-                throw new TimeOverlapException("That time slot is taken by another appointment, please try another hour.");
-            }
+        if (appointmentRepository.hasOverlappingAppointments(schedule.getId(),appointmentsDto.getStartOfAppointment(),appointmentsDto.getEndOfAppointment())){
+            throw new TimeOverlapException("That time slot is taken by another appointment, please try another hour.");
         }
-        if (appointmentsDto.getStartOfAppointment().isBefore(schedule.getStartTime())||appointmentsDto.getStartOfAppointment().isAfter(schedule.getEndTime())
-                ||appointmentsDto.getEndOfAppointment().isBefore(schedule.getStartTime())||appointmentsDto.getEndOfAppointment().isAfter(schedule.getEndTime())){
+        if (!doctorScheduleRepository.isAppointmentWithinDoctorSchedule(schedule.getId(),appointmentsDto.getStartOfAppointment(),appointmentsDto.getEndOfAppointment())){
             throw new TimeOverlapException("That appointment is outside the doctor's hours");
         }
         appointment.setStartOfAppointment(appointmentsDto.getStartOfAppointment());
@@ -86,6 +85,8 @@ public class AppointmentServiceImpl implements AppointmentService {
         }
         return myList;
     }
+
+
 
     @Override
     public List<AppointmentsDto> findAll() {

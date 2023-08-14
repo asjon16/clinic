@@ -45,6 +45,10 @@ public class UserRestController {
     public ResponseEntity<UserDto> addAppointmentToDoctorSchedule(@PathVariable Integer doctorId, @RequestBody AppointmentsDto appointmentId, @RequestParam Integer patientId){
         return ResponseEntity.ok(userService.assignAnAppointment(doctorId,appointmentId,patientId));
     }
+    @PostMapping("/doctor/schedules/{doctorId}") // Works
+    public ResponseEntity<UserDto> addAppointmentToDoctorSchedules(@PathVariable Integer doctorId, @RequestBody AppointmentsDto appointmentId, @RequestParam Integer patientId){
+        return ResponseEntity.ok(userService.testForUpdate(doctorId,appointmentId,patientId));
+    }
 
     @PutMapping("/doctor/{id}") // Works don't touch
     public ResponseEntity<UserDto> assignDoctorToDepartment(@PathVariable Integer id, @RequestParam Integer d){

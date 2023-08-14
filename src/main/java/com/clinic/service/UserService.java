@@ -32,7 +32,10 @@ public interface UserService {
     //transactional
     UserDto assignAnAppointment(Integer doctorId, AppointmentsDto appointmentsDto, Integer patientId);
 
-    UserDto update(Integer id,@Valid UserDto user); // update it with password encoder
+    @Transactional // Krijon nje appointment te schedule i doktorit qe fusim me ID me pacientin qe kemi regjistruar
+    UserDto testForUpdate(Integer doctorId, AppointmentsDto appointmentsDto, Integer patientId);
+
+    UserDto update(Integer id, @Valid UserDto user); // update it with password encoder
     User findById(Integer id);
 
     UserDto findUserWithAppointmentsForDate(Integer userId, LocalDateTime date);
