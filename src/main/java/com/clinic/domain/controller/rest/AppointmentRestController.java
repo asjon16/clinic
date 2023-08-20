@@ -3,6 +3,7 @@ package com.clinic.domain.controller.rest;
 import com.clinic.domain.dto.AppointmentsDto;
 import com.clinic.domain.dto.DepartmentsDto;
 import com.clinic.domain.dto.PatientDto;
+import com.clinic.domain.dto.UserDto;
 import com.clinic.domain.mapper.AppointmentsMapper;
 import com.clinic.entity.Appointments;
 import com.clinic.entity.Patient;
@@ -28,6 +29,11 @@ public class AppointmentRestController {
 
     private final AppointmentService appointmentService;
 
+    @PostMapping("/doctor/schedule/{doctorId}") // Works
+    public ResponseEntity<AppointmentsDto> addAppointmentToDoctorSchedules(@PathVariable Integer doctorId, @RequestBody AppointmentsDto appointmentId, @RequestParam Integer patientId){
+        return ResponseEntity.ok(appointmentService.assignAnAppointment(doctorId,appointmentId,patientId));
+    }
+
     @PutMapping("/update/{patientId}") //works
     public ResponseEntity<AppointmentsDto> updateAppointmentWithId
             (@PathVariable Integer patientId, @RequestBody AppointmentsDto appointmentsDto){
@@ -42,6 +48,10 @@ public class AppointmentRestController {
     public ResponseEntity<List<AppointmentsDto>> getPatientAppointments(@PathVariable Integer id){
         return ResponseEntity.ok(appointmentService.findAllAppointmentByPatient_id(id));
     }
+    @PostMapping("/all/{id}") //not tested
+    public ResponseEntity<List<AppointmentsDto>> getPatientAppointmentsBetweenTheDates(@PathVariable Integer id, @RequestBody AppointmentsDto appointmentsDto){
+        return ResponseEntity.ok(appointmentService.listAllAppointmentsBetweenDates(id,appointmentsDto));
+    }
 
     @GetMapping // not tested
     public ResponseEntity<List<AppointmentsDto>> getAppointments(){
@@ -49,7 +59,7 @@ public class AppointmentRestController {
     }
 
     @DeleteMapping("/{id}") // not tested
-    public ResponseEntity<Void> deletePatient(@PathVariable Integer id){
+    public ResponseEntity<Void> deleteAppointment(@PathVariable Integer id){
         appointmentService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }

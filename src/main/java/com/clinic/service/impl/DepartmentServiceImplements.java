@@ -2,6 +2,7 @@ package com.clinic.service.impl;
 
 import com.clinic.domain.dto.DepartmentsDto;
 
+import com.clinic.domain.exception.PermissionNotAllowedException;
 import com.clinic.domain.exception.ResourceAlreadyExistsException;
 import com.clinic.domain.exception.ResourceNotFoundException;
 import com.clinic.domain.mapper.DepartmentsMapper;
@@ -11,9 +12,12 @@ import com.clinic.entity.Departments;
 import com.clinic.entity.Gender;
 import com.clinic.entity.Patient;
 import com.clinic.repository.DepartmentRepository;
+import com.clinic.repository.UserRepository;
 import com.clinic.service.DepartmentService;
+import com.clinic.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -30,6 +34,7 @@ import static com.clinic.domain.mapper.DepartmentsMapper.*;
 public class DepartmentServiceImplements implements DepartmentService {
 
     private final DepartmentRepository departmentRepository;
+    private final UserRepository userService;
 
 
 
@@ -69,7 +74,17 @@ public class DepartmentServiceImplements implements DepartmentService {
     @Override // Works don't touch
     public void deleteById(Integer id) {
         var toDelete = findById(id);
-       /* toDelete.setDeleted(true);*/
-        departmentRepository.delete(toDelete);
+      if (userService.findAllDoctorsByDepartmentId(id).isEmpty()){
+          toDelete.setDeleted(true);
+          departmentRepository.save(toDelete);
+      }else {
+          throw new PermissionNotAllowedException("Department cannot be deleted because it's assigned to active users.");
+      }
+    }
+
+    @Scheduled(cron = "0 0 0 */30 * ?")
+    @Override
+    public void deleteByDeletedTrue() {
+        departmentRepository.deleteByDeletedTrue();
     }
 }

@@ -1,25 +1,15 @@
 package com.clinic.domain.controller.rest;
 
-import com.clinic.domain.dto.AppointmentsDto;
-import com.clinic.domain.dto.DepartmentsDto;
-import com.clinic.domain.dto.DoctorScheduleDto;
-import com.clinic.domain.dto.UserDto;
-import com.clinic.entity.Appointments;
-import com.clinic.entity.DoctorSchedule;
-import com.clinic.entity.User;
-import com.clinic.service.DoctorScheduleService;
+import com.clinic.domain.dto.*;
 import com.clinic.service.UserService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 import static com.clinic.domain.mapper.UserMapper.toDto;
@@ -32,7 +22,7 @@ public class UserRestController {
 
     private final UserService userService;
 
-
+    @PreAuthorize("hasAnyRole('ADMIN','WORKER')")
     @PutMapping("/{id}")
     public ResponseEntity<UserDto> updateUser(@PathVariable Integer id, @RequestBody UserDto u){
         return ResponseEntity.ok(userService.update(id,u));
@@ -41,15 +31,7 @@ public class UserRestController {
     public ResponseEntity<DoctorScheduleDto> getScheduleOfDoctorWithDoctorId(@PathVariable Integer id){
         return ResponseEntity.ok((userService.getDoctorScheduleByDoctorId(id)));
     }
-    @PutMapping("/doctor/schedule/{doctorId}") // Works
-    public ResponseEntity<UserDto> addAppointmentToDoctorSchedule(@PathVariable Integer doctorId, @RequestBody AppointmentsDto appointmentId, @RequestParam Integer patientId){
-        return ResponseEntity.ok(userService.assignAnAppointment(doctorId,appointmentId,patientId));
-    }
-    @PostMapping("/doctor/schedules/{doctorId}") // Works
-    public ResponseEntity<UserDto> addAppointmentToDoctorSchedules(@PathVariable Integer doctorId, @RequestBody AppointmentsDto appointmentId, @RequestParam Integer patientId){
-        return ResponseEntity.ok(userService.testForUpdate(doctorId,appointmentId,patientId));
-    }
-
+    @PreAuthorize("hasAnyRole('ADMIN','WORKER')")
     @PutMapping("/doctor/{id}") // Works don't touch
     public ResponseEntity<UserDto> assignDoctorToDepartment(@PathVariable Integer id, @RequestParam Integer d){
         return ResponseEntity.ok(userService.assignDoctorToDepartment(id,d));
@@ -64,19 +46,12 @@ public class UserRestController {
         return ResponseEntity.ok((userService.findAllDoctorsByDepartmentId(departmentId)));
     }
 
-    @GetMapping("/{id}/appointments")
-    public ResponseEntity<UserDto> getUserWithAppointmentsForDate(
-            @PathVariable Integer id,
-            @RequestParam("date") LocalDateTime date) {
-        UserDto user = userService.findUserWithAppointmentsForDate(id, date);
-        return ResponseEntity.ok(user);
-    }
-
-
     @GetMapping //Works don't touch
     public ResponseEntity<List<UserDto>> getUsers(){
         return ResponseEntity.ok(userService.findAll());
     }
+
+    @PreAuthorize("hasAnyRole('ADMIN','WORKER')")
     @DeleteMapping("/{id}") // Works don't touch
     public ResponseEntity<Void> deleteUser(@PathVariable Integer id){
         userService.deleteById(id);
@@ -88,8 +63,16 @@ public class UserRestController {
             (@PathVariable Integer id,@RequestBody DoctorScheduleDto doctorScheduleDto){
 
         return ResponseEntity.ok(userService.updateDoctorSchedule(id,doctorScheduleDto));
+    }
+    @PutMapping("/password")
+    public ResponseEntity<UserDto>updatePassword(@RequestBody @Valid PasswordChanger passwordChanger){
+        return ResponseEntity.ok(userService.updatePassword(passwordChanger));
+    }
 
-
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/password/{id}")
+    public ResponseEntity<UserDto>changePassword(@PathVariable Integer id,@RequestBody @Valid NewPasswordAdminOnly password){
+        return ResponseEntity.ok(userService.changePassword(id,password));
     }
 
 

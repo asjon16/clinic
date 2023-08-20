@@ -15,4 +15,5 @@ public interface PatientService {
     Patient findById(Integer id);
     List<PatientDto> findAll();
     void deleteById(Integer id);
+    void deleteByDeletedTrue();
 }

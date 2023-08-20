@@ -13,11 +13,11 @@ import java.util.List;
 
 public interface UserService {
 
-    @Transactional
         // Works don't touch
     UserDto registerDetailsForWorker(@Valid RegisterForm form);
 
-    @Transactional
+    UserDto changePassword(Integer userId, NewPasswordAdminOnly password);
+
         // Works don't touch
     UserDto registerDetailsForAdmin(@Valid RegisterForm form);
 
@@ -29,20 +29,15 @@ public interface UserService {
 
     DoctorScheduleDto getDoctorScheduleByDoctorId(Integer id);
 
-    //transactional
-    UserDto assignAnAppointment(Integer doctorId, AppointmentsDto appointmentsDto, Integer patientId);
-
-    @Transactional // Krijon nje appointment te schedule i doktorit qe fusim me ID me pacientin qe kemi regjistruar
-    UserDto testForUpdate(Integer doctorId, AppointmentsDto appointmentsDto, Integer patientId);
-
     UserDto update(Integer id, @Valid UserDto user); // update it with password encoder
     User findById(Integer id);
 
-    UserDto findUserWithAppointmentsForDate(Integer userId, LocalDateTime date);
-
     List<UserDto> findAll();
     UserDto updateDoctorSchedule(Integer id, DoctorScheduleDto doctorScheduleDto);
+    UserDto updatePassword(PasswordChanger passwordChanger);
+
     void deleteById(Integer id);
+    void deleteByDeletedTrue();
 
 
 

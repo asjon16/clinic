@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -32,15 +33,23 @@ public class DoctorSchedule extends BaseEntity<Integer>{
     @OneToOne(mappedBy = "schedule",cascade = CascadeType.ALL)
     private User doctor;
 
-    private LocalDateTime startTime ;
+    private LocalTime startTime ;
 
-    private LocalDateTime endTime ;
+    private LocalTime endTime ;
 
-    public DoctorSchedule(LocalDateTime startTime, LocalDateTime endTime) {
+    public DoctorSchedule(LocalTime startTime, LocalTime endTime) {
         this.startTime = startTime;
         this.endTime = endTime;
     }
 
     public DoctorSchedule() {
+    }
+
+    @Override
+    public String toString() {
+        return "Schedule ID= " + id +
+                ", startTime= " + startTime +
+                ", endTime= " + endTime
+                ;
     }
 }

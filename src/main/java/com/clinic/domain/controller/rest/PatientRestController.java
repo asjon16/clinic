@@ -5,6 +5,7 @@ import com.clinic.service.PatientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -42,6 +43,13 @@ public class PatientRestController {
     @DeleteMapping("/{id}") // does it's job (turns deleted to true)
     public ResponseEntity<Void> deletePatient(@PathVariable Integer id){
         patientService.deleteById(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/deleteAll") // does it's job (turns deleted to true)
+    public ResponseEntity<Void> performHardDeletion(){
+        patientService.deleteByDeletedTrue();
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

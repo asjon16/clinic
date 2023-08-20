@@ -8,6 +8,7 @@ import com.clinic.entity.User;
 import jakarta.validation.Valid;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface DoctorScheduleService {
@@ -16,7 +17,7 @@ public interface DoctorScheduleService {
     DoctorScheduleDto updateSchedule(Integer id, DoctorScheduleDto doctorSchedule);
 
     DoctorSchedule findById(Integer id);
-    void deleteById(Integer id);
+    boolean isAppointmentWithinDoctorSchedule(Integer scheduleId, LocalDateTime appointmentStartTime, LocalDateTime appointmentEndTime);
 
 
 

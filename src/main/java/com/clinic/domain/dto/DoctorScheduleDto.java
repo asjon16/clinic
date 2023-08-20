@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -22,9 +23,9 @@ public class DoctorScheduleDto {
 
     private String doctor;
 
-    private LocalDateTime startTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(8,0,0));
+    private LocalTime startTime;
 
-    private LocalDateTime endTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(17,0,0));
+    private LocalTime endTime;
 
     public DoctorScheduleDto() {
         this.startTime = startTime;

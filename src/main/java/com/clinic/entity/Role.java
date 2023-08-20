@@ -4,7 +4,7 @@ import com.clinic.domain.exception.ResourceNotFoundException;
 
 import java.util.Arrays;
 
-public enum UserRole {
+public enum Role {
 
     WORKER("WORKER"),
     DOCTOR("DOCTOR"),
@@ -12,12 +12,12 @@ public enum UserRole {
 
     private String value;
 
-    UserRole(String value){
+    Role(String value){
         this.value = value;
     }
 
-    public static UserRole fromValue(String value){
-        return Arrays.asList(UserRole.values()).stream()
+    public static Role fromValue(String value){
+        return Arrays.asList(Role.values()).stream()
                 .filter(role -> role.value.equals(value))
                 .findFirst()
                 .orElseThrow(()-> new ResourceNotFoundException("Role not found"));

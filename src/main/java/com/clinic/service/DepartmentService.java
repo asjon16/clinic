@@ -1,6 +1,7 @@
 package com.clinic.service;
 
 import com.clinic.domain.dto.DepartmentsDto;
+import com.clinic.domain.exception.PermissionNotAllowedException;
 import com.clinic.entity.Departments;
 import jakarta.validation.Valid;
 
@@ -13,4 +14,5 @@ public interface DepartmentService {
     Departments findById(Integer id);
     List<DepartmentsDto> findAll();
     void deleteById(Integer id);
+    void deleteByDeletedTrue();
 }

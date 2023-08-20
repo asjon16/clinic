@@ -15,12 +15,8 @@ public interface UserRepository extends JpaRepository<User,Integer> {
     Optional<User> findFirstByEmail(String email);
     @Query("SELECT u FROM User u WHERE u.doctorDepartment.id = :departmentId")
     List<User> findAllDoctorsByDepartmentId(Integer departmentId);
+    void deleteByDeletedTrue();
 
-    @Query("SELECT u FROM User u JOIN FETCH u.schedule s JOIN FETCH s.appointments a " +
-            "WHERE u.id = :userId AND a.startOfAppointment >= :startDate AND a.endOfAppointment < :endDate")
-    User findUserWithAppointmentsForDate(@Param("userId") Integer userId,
-                                         @Param("startDate") LocalDateTime startDate,
-                                         @Param("endDate") LocalDateTime endDate);
 
 
 

@@ -29,11 +29,6 @@ public class DoctorScheduleRestController {
     }
 
 
-    @DeleteMapping("/{id}")// not tested
-    public ResponseEntity<Void> deleteDoctorSchedule(@PathVariable Integer id){
-        doctorScheduleService.deleteById(id);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
 
 
 }

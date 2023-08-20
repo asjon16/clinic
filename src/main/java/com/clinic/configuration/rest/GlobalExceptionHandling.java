@@ -50,5 +50,10 @@ public class GlobalExceptionHandling {
     var response = new GenericExceptionResponse(HttpStatus.BAD_REQUEST.value(),req.getRequestURI(), exp.getMessage());
     return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
   }
+  @ExceptionHandler
+  public ResponseEntity<GenericExceptionResponse> handleGenericException (PermissionNotAllowedException exp, HttpServletRequest req){
+    var response = new GenericExceptionResponse(HttpStatus.BAD_REQUEST.value(),req.getRequestURI(), exp.getMessage());
+    return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+  }
 
 }

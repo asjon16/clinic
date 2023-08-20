@@ -8,8 +8,10 @@ import com.clinic.entity.Gender;
 import com.clinic.entity.Patient;
 import com.clinic.repository.PatientRepository;
 import com.clinic.service.PatientService;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import java.util.List;
@@ -79,5 +81,12 @@ public class PatientServiceImplements implements PatientService {
         toDelete.setDeleted(true);
         patientRepository.save(toDelete);
         }
+    }
+
+    @Override
+    @Transactional
+    @Scheduled(cron = "0 0 0 */30 * ?")
+    public void deleteByDeletedTrue() {
+        patientRepository.deleteByDeletedTrue();
     }
 }

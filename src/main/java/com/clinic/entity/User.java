@@ -4,11 +4,12 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -28,7 +29,7 @@ public class User extends BaseEntity<Integer> implements UserDetails {
     @Column(name = "password")
     private String password;
     @Enumerated(EnumType.STRING)
-    private UserRole role;
+    private Role role;
 
     public User() {
     }
@@ -52,7 +53,10 @@ public class User extends BaseEntity<Integer> implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return Arrays.stream(role.name()
+                        .split(","))
+                .map(SimpleGrantedAuthority::new)
+                .toList();
     }
 
     @Override

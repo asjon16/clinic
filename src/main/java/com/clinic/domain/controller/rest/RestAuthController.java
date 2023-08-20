@@ -37,6 +37,8 @@ public class RestAuthController {
         }
     }
 
+
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/register/doctor")
     public ResponseEntity<UserDto> registerDoctor(@RequestBody @Valid RegisterForm user, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
