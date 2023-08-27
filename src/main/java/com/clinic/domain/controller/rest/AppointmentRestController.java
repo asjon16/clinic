@@ -34,17 +34,17 @@ public class AppointmentRestController {
         return ResponseEntity.ok(appointmentService.assignAnAppointment(doctorId,appointmentId,patientId));
     }
 
-    @PutMapping("/update/{patientId}") //works
+    @PutMapping("/update/{id}") //works
     public ResponseEntity<AppointmentsDto> updateAppointmentWithId
-            (@PathVariable Integer patientId, @RequestBody AppointmentsDto appointmentsDto){
-        return ResponseEntity.ok(appointmentService.updateById(patientId,appointmentsDto));
+            (@PathVariable Integer id, @RequestBody AppointmentsDto appointmentsDto){
+        return ResponseEntity.ok(appointmentService.updateById(id,appointmentsDto));
     }
 
-    @GetMapping("/{id}") //not tested
+    @GetMapping("/{id}") //works
     public ResponseEntity<AppointmentsDto> getAppointmentById(@PathVariable Integer id){
         return ResponseEntity.ok(toDto(appointmentService.findById(id)));
     }
-    @GetMapping("/patient/{id}") //not tested
+    @GetMapping("/patient/{id}") //works
     public ResponseEntity<List<AppointmentsDto>> getPatientAppointments(@PathVariable Integer id){
         return ResponseEntity.ok(appointmentService.findAllAppointmentByPatient_id(id));
     }

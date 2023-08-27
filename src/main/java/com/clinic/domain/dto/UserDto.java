@@ -33,6 +33,7 @@ public class UserDto {
     private String departmentsDto;
     private String doctorSchedule ;
     private List<String> appointments;
+    private List<String> daysOffDto;
 
     public Integer getId() {
         return id;

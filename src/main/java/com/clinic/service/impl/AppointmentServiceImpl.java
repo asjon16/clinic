@@ -24,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,11 +59,17 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Override
     @Transactional // Krijon nje appointment te schedule i doktorit qe fusim me ID me pacientin qe kemi regjistruar
     public AppointmentsDto assignAnAppointment(Integer doctorId, AppointmentsDto appointmentsDto, Integer patientId){
+        if (appointmentsDto.getStartOfAppointment().isBefore(LocalDateTime.now())||appointmentsDto.getEndOfAppointment().isBefore(LocalDateTime.now())){
+            throw new TimeOverlapException("Stop right there time traveler!");
+        }
 
         if (!appointmentsDto.getStartOfAppointment().plusHours(1).isEqual(appointmentsDto.getEndOfAppointment())){
             throw new TimeOverlapException("The times given are not correct, please double check");
         }
         var doctor = userService.findById(doctorId);
+        if (doctor.getDaysOff().stream().anyMatch(daysOff -> daysOff.getDaysOff().equals(appointmentsDto.getStartOfAppointment().toLocalDate()))){
+            throw new TimeOverlapException("You cannot assign an appointment on a day off");
+        }
         var doctorSchedule = doctor.getSchedule();
         var patient = patientService.findById(patientId);
         var appointment = createNewWithRegisteredPatient(appointmentsDto,patientId);
@@ -104,8 +111,15 @@ public class AppointmentServiceImpl implements AppointmentService {
                 (appointmentsDto.getEndOfAppointment().isBefore(appointmentsDto.getStartOfAppointment()))){
             throw new TimeOverlapException("The times given are not correct, please double check");
         }
+        if (appointmentsDto.getStartOfAppointment().toLocalDate().isBefore(LocalDate.now())||appointmentsDto.getEndOfAppointment().toLocalDate().isBefore(LocalDate.now())){
+            throw new TimeOverlapException("Stop right there time traveler!");
+        }
         var appointment = findById(id);
         var schedule = appointment.getDoctorSchedule();
+        var doctor = schedule.getDoctor();
+        if (doctor.getDaysOff().stream().anyMatch(daysOff -> daysOff.getDaysOff().equals(appointmentsDto.getStartOfAppointment().toLocalDate()))){
+            throw new TimeOverlapException("You cannot assign an appointment on a day off");
+        }
         if (appointmentRepository.hasOverlappingAppointments(schedule.getId(),appointmentsDto.getStartOfAppointment(),appointmentsDto.getEndOfAppointment())){
             throw new TimeOverlapException("That time slot is taken by another appointment, please try another hour.");
         }

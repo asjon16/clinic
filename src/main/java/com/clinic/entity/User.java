@@ -7,8 +7,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Getter
@@ -30,6 +32,11 @@ public class User extends BaseEntity<Integer> implements UserDetails {
     private String password;
     @Enumerated(EnumType.STRING)
     private Role role;
+
+
+    @OneToMany(cascade = CascadeType.ALL)
+    private List <DaysOff> daysOff;
+
 
     public User() {
     }

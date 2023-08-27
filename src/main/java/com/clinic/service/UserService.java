@@ -2,6 +2,7 @@ package com.clinic.service;
 
 import com.clinic.domain.dto.*;
 import com.clinic.entity.Appointments;
+import com.clinic.entity.DaysOff;
 import com.clinic.entity.DoctorSchedule;
 import com.clinic.entity.User;
 import jakarta.transaction.Transactional;
@@ -13,7 +14,10 @@ import java.util.List;
 
 public interface UserService {
 
-        // Works don't touch
+
+    UserDto deleteDayOffForUser(Integer userId, Integer dayOffId);
+
+    // Works don't touch
     UserDto registerDetailsForWorker(@Valid RegisterForm form);
 
     UserDto changePassword(Integer userId, NewPasswordAdminOnly password);
@@ -34,10 +38,19 @@ public interface UserService {
 
     List<UserDto> findAll();
     UserDto updateDoctorSchedule(Integer id, DoctorScheduleDto doctorScheduleDto);
+    UserDto setDaysOffForUser(DaysOffDto dates, Integer userId);
     UserDto updatePassword(PasswordChanger passwordChanger);
+
+    List <UserDto> findAllByFirstname(String name);
+    List <UserDto> findAllByLastname(String name);
+    List<UserDto> findDoctorWithMostAppointments();
 
     void deleteById(Integer id);
     void deleteByDeletedTrue();
+
+    List <UserDto> doctorThatPatientVisitsTheMost(Integer patientId);
+
+
 
 
 

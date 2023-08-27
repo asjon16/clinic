@@ -50,6 +50,24 @@ public class UserRestController {
     public ResponseEntity<List<UserDto>> getUsers(){
         return ResponseEntity.ok(userService.findAll());
     }
+    @GetMapping ("/mostappointments")//Works don't touch
+    public ResponseEntity<List<UserDto>> findDoctorWithMostAppointments(){
+        return ResponseEntity.ok(userService.findDoctorWithMostAppointments());
+    }
+
+    @GetMapping ("/firstname")//Works don't touch
+    public ResponseEntity<List<UserDto>> findUserWithFirstNAme(@RequestParam String name){
+        return ResponseEntity.ok(userService.findAllByFirstname(name));
+    }
+
+    @GetMapping ("/lastname")//Works don't touch
+    public ResponseEntity<List<UserDto>> findUserWithLastName(@RequestParam String name){
+        return ResponseEntity.ok(userService.findAllByLastname(name));
+    }
+    @GetMapping ("/mostvisited")//Works don't touch
+    public ResponseEntity<List<UserDto>> findDoctorThatPatientVisitMostly(@RequestParam Integer patientId){
+        return ResponseEntity.ok(userService.doctorThatPatientVisitsTheMost(patientId));
+    }
 
     @PreAuthorize("hasAnyRole('ADMIN','WORKER')")
     @DeleteMapping("/{id}") // Works don't touch
@@ -63,6 +81,15 @@ public class UserRestController {
             (@PathVariable Integer id,@RequestBody DoctorScheduleDto doctorScheduleDto){
 
         return ResponseEntity.ok(userService.updateDoctorSchedule(id,doctorScheduleDto));
+    }
+    @PostMapping("/dayoff/{id}")
+    public ResponseEntity<UserDto> addDayOffForDoctor(@RequestBody DaysOffDto daysOffDto,@PathVariable Integer id){
+        return ResponseEntity.ok(userService.setDaysOffForUser(daysOffDto,id));
+    }
+
+    @DeleteMapping("/dayoff/{id}")
+    public ResponseEntity<UserDto> removeDayOffForDoctor(@PathVariable Integer id,@RequestParam Integer dayOffId){
+        return ResponseEntity.ok(userService.deleteDayOffForUser(id,dayOffId));
     }
     @PutMapping("/password")
     public ResponseEntity<UserDto>updatePassword(@RequestBody @Valid PasswordChanger passwordChanger){

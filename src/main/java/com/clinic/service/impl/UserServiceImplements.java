@@ -3,16 +3,17 @@ package com.clinic.service.impl;
 import com.clinic.configuration.SecurityUtils;
 import com.clinic.domain.dto.*;
 import com.clinic.domain.exception.*;
+import com.clinic.domain.mapper.DaysOffMapper;
 import com.clinic.domain.mapper.DoctorScheduleMapper;
 import com.clinic.domain.mapper.UserMapper;
 import com.clinic.entity.*;
+import com.clinic.repository.DaysOffRepository;
 import com.clinic.repository.DepartmentRepository;
 import com.clinic.repository.DoctorScheduleRepository;
 import com.clinic.repository.UserRepository;
 import com.clinic.service.*;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -39,6 +41,7 @@ public class UserServiceImplements implements UserService{
     private final DepartmentRepository departmentRepository;
     private final DoctorScheduleService doctorScheduleService;
     private final DoctorScheduleRepository doctorScheduleRepository;
+    private final DaysOffRepository daysOffRepository;
 
 
 
@@ -48,14 +51,51 @@ public class UserServiceImplements implements UserService{
     public UserDto registerDetails(@Valid RegisterForm form) {
         var user= new User();
         var scheduleOfDoctor = new DoctorSchedule(LocalTime.of(8,0),LocalTime.of(17,0));
+        var daysOffForUser = new ArrayList<DaysOff>();
         user.setEmail(form.getEmail());
         user.setPassword(passwordEncoder.encode(form.getPassword()));
         user.setFirstname(form.getFirstname());
         user.setLastname(form.getLastname());
         user.setRole(Role.fromValue("DOCTOR"));
         user.setSchedule(scheduleOfDoctor);
+        user.setDaysOff(daysOffForUser);
         doctorScheduleRepository.save(scheduleOfDoctor);
         return toDto(userRepository.save(user));
+    }
+
+    @Transactional
+    @Override
+    public UserDto setDaysOffForUser(DaysOffDto dates, Integer userId){
+        var user = findById(userId);
+        if (user.getRole().equals(Role.ADMIN)){
+            throw new WrongRoleException("This role cant have days off");
+        }
+        List<DaysOff> userDaysOff = user.getDaysOff();
+        var daysOffToBeAdded = DaysOffMapper.toEntity(dates);
+        if (userDaysOff.stream().anyMatch(daysOff -> daysOff.getDaysOff().equals(daysOffToBeAdded.getDaysOff()))) {
+            throw new TimeOverlapException("User already has a day off on this date");
+        }
+        daysOffRepository.save(daysOffToBeAdded);
+        userDaysOff.add(daysOffToBeAdded);
+        userRepository.save(user);
+        return toDto(user);
+    }
+    @Transactional
+    @Override
+    public UserDto deleteDayOffForUser(Integer userId, Integer dayOffId){
+        var user = findById(userId);
+        if (user.getRole().equals(Role.ADMIN)){
+            throw new WrongRoleException("This role cant have days off");
+        }
+        List<DaysOff> userDaysOff = user.getDaysOff();
+        var dayOff = daysOffRepository.findById(dayOffId).orElseThrow(()-> new ResourceNotFoundException(String
+                .format("DayOff with id %s do not exist",dayOffId)));;
+        if (!userDaysOff.contains(dayOff)){
+            throw new ResourceNotFoundException("User doesnt have that day off");
+        }else userDaysOff.remove(dayOff);
+        daysOffRepository.delete(dayOff);
+        userRepository.save(user);
+        return  toDto(user);
     }
 
     @Transactional
@@ -84,6 +124,17 @@ public class UserServiceImplements implements UserService{
 
         return toDto(userRepository.save(loggedUser));
     }
+
+    @Override
+    public List<UserDto> findAllByFirstname(String name) {
+        return userRepository.findAllByFirstnameContainingIgnoreCase(name).stream().map(UserMapper::toDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<UserDto> findAllByLastname(String name) {
+        return userRepository.findAllByLastnameContainingIgnoreCase(name).stream().map(UserMapper::toDto).collect(Collectors.toList()) ;
+    }
+
     @Override
     @Transactional
     public UserDto changePassword(Integer userId, NewPasswordAdminOnly password){
@@ -203,16 +254,20 @@ public class UserServiceImplements implements UserService{
     }
 
     @Override
+   public List<UserDto> findDoctorWithMostAppointments(){
+        return userRepository.findDoctorWithMostAppointments().stream().map(UserMapper::toDto).collect(Collectors.toList());
+    }
+
+    @Override
     @Scheduled(cron = "0 0 0 */30 * ?")
     public void deleteByDeletedTrue() {
         userRepository.deleteByDeletedTrue();
     }
 
-
-
-
-
-
+    @Override
+    public List <UserDto> doctorThatPatientVisitsTheMost(Integer patientId) {
+        return userRepository.findDoctorWithMostVisits(patientId).stream().map(UserMapper::toDto).collect(Collectors.toList());//.orElseThrow(()-> new ResourceNotFoundException("Patient doesnt have any visits")));
+    }
 
 
 }
