@@ -27,7 +27,9 @@ public class UserMapper {
         user.setLastname(u.getLastname());
         user.setEmail(u.getEmail());
         user.setRole(u.getRole().name());
-        user.setDaysOffDto(u.getDaysOff().stream().map(DaysOff::toString).collect(Collectors.toList()));
+        if (u.getDaysOff()==null){
+            user.setDaysOffDto(null);
+        }else user.setDaysOffDto(u.getDaysOff().stream().map(DaysOff::toString).collect(Collectors.toList()));
         if (u.getDoctorDepartment()==null){
             user.setDepartmentsDto(null);
         }else user.setDepartmentsDto(u.getDoctorDepartment().getName());
@@ -44,8 +46,5 @@ public class UserMapper {
         }
         return user;
     }
-
-// bej krijimin e schedules ne momentin qe krijohet doktori
-
 
 }
