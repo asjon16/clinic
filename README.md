@@ -1,3 +1,5 @@
+CLINIC WORK IS THE LATEST VERSION!
+
 ----------------------PROJECT ONLINE CLINIC-------------------------
 
 ENTITIES 
